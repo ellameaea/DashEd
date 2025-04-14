@@ -1,0 +1,227 @@
+from dash import html, dcc
+import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+# ===== DATA FUNCTIONS =====
+def get_pie_data():
+    """Return sample data for pie chart"""
+    return {
+        'Category': ['Category 1', 'Category 2', 'Category 3'],
+        'Value': [60, 30, 10]
+    }
+
+def get_philippines_map_data():
+    """Generate sample Philippines map data - replace with real data in production"""
+    regions = ['NCR', 'CAR', 'Region I', 'Region II', 'Region III', 'Region IV-A', 
+               'Region IV-B', 'Region V', 'Region VI', 'Region VII', 'Region VIII', 
+               'Region IX', 'Region X', 'Region XI', 'Region XII', 'Region XIII', 'BARMM']
+    
+    # Random values for demonstration
+    values = np.random.randint(1, 5, size=len(regions))
+    
+    # Create DataFrame
+    return pd.DataFrame({
+        'region': regions,
+        'value': values
+    })
+
+# ===== CHART CREATION FUNCTIONS =====
+def create_pie_chart(data, hole_size=0.4, height=200, colors=None):
+    """Create a reusable pie chart"""
+    if colors is None:
+        colors = ['#2D71B8', '#F7A823', '#EB5757']
+        
+    df = pd.DataFrame(data)
+    fig = go.Figure(data=[go.Pie(
+        labels=df['Category'],
+        values=df['Value'],
+        hole=hole_size,
+        marker_colors=colors
+    )])
+    
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        showlegend=False,
+        height=height,
+    )
+    
+    return fig
+
+def create_philippines_map(data, color_scale=None, height=350):
+    """Create a reusable Philippines map visualization"""
+    if color_scale is None:
+        color_scale = ['yellow', 'pink', 'purple']
+        
+    # In a real implementation, you would use px.choropleth with appropriate GeoJSON
+    fig = px.choropleth(
+        data,
+        locations='region',
+        color='value',
+        color_continuous_scale=color_scale,
+        scope="asia",
+        labels={'value': 'Value'},
+    )
+    
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        geo=dict(
+            showcoastlines=True,
+            coastlinecolor="White",
+            showland=True,
+            landcolor="lightgrey",
+            showocean=True,
+            oceancolor="lightgrey",
+            showlakes=False,
+            showcountries=False,
+            projection_scale=7,
+            center=dict(lat=12.8797, lon=121.7740),  # Center on Philippines
+        ),
+        height=height,
+    )
+    
+    return fig
+
+# ===== UI COMPONENT FUNCTIONS =====
+def create_header_banner(title, description, total_students, pie_chart_fig):
+    """Create reusable header banner with title, description and chart"""
+    return html.Div([
+        # Left side - Title and description
+        html.Div([
+            html.H2(title, style={"color": "white", "font-size": "24px", "margin-bottom": "15px"}),
+            html.P(
+                description,
+                style={"color": "white", "font-size": "12px", "line-height": "1.4", "max-width": "90%"}
+            ),
+            html.A("Read Full Article →", href="#", style={"color": "white", "font-size": "12px", "margin-top": "10px", "display": "block"})
+        ], style={"width": "60%", "padding": "20px 30px"}),
+        
+        # Right side - Big number and chart
+        html.Div([
+            html.H2(f"{total_students:,}", style={"color": "white", "font-size": "32px", "font-weight": "bold", "margin-bottom": "5px", "text-align": "center"}),
+            html.P("Total Students", style={"color": "white", "font-size": "12px", "text-align": "center"}),
+            dcc.Graph(
+                figure=pie_chart_fig,
+                config={'displayModeBar': False},
+                style={"height": "150px", "width": "150px", "margin": "0 auto"}
+            )
+        ], style={"width": "40%", "padding": "20px", "display": "flex", "flex-direction": "column", "justify-content": "center"})
+    ], style={
+        "display": "flex", 
+        "background-image": "linear-gradient(90deg, rgba(45, 113, 184, 0.9), rgba(45, 113, 184, 0.9)), url(/assets/library-background.jpg)",
+        "background-size": "cover",
+        "border-radius": "10px",
+        "margin-bottom": "20px",
+        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)"
+    })
+
+def create_info_card(title, content, height=300, border_color="#e6617c"):
+    """Create reusable info card"""
+    return html.Div([
+        html.H3(title, style={"color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
+        html.P(content, style={"font-size": "12px", "color": "#333"})
+    ], style={
+        "padding": "15px 20px",
+        "background": "white",
+        "border-radius": "8px",
+        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)",
+        "border": f"1px solid {border_color}",
+        "height": f"{height}px"  # Fixed height for consistent sizing
+    })
+
+def create_visualization_card(title, chart_component, description=None, height=350, border_color="#e6617c"):
+    """Create reusable visualization card with optional description"""
+    children = [
+        html.H3(title, style={"color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
+    ]
+    
+    if description:
+        children.append(html.P(description, style={"font-size": "12px", "color": "#333", "margin-bottom": "10px"}))
+    
+    children.append(chart_component)
+    
+    return html.Div(children, style={
+        "width": "100%",
+        "background": "white",
+        "border-radius": "8px",
+        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)",
+        "padding": "10px",
+        "border": f"1px solid {border_color}",
+        "height": f"{height}px" if height else "auto"
+    })
+
+def create_two_column_layout(left_component, right_component):
+    """Create a reusable two-column layout"""
+    return html.Div([
+        html.Div([left_component], style={"width": "48%"}),
+        html.Div([right_component], style={"width": "48%"})
+    ], style={
+        "display": "flex", 
+        "justify-content": "space-between",
+        "margin-bottom": "20px"
+    })
+
+def create_stacked_cards(cards_list):
+    """Create a stack of cards in a single column"""
+    return html.Div(
+        cards_list,
+        style={
+            "display": "flex",
+            "flex-direction": "column",
+            "gap": "20px"
+        }
+    )
+
+# ===== MAIN LAYOUT FUNCTION =====
+def create_main_content():
+    """Create the main dashboard content using reusable components"""
+    # Get data
+    pie_data = get_pie_data()
+    map_data = get_philippines_map_data()
+    
+    # Create charts
+    pie_chart = create_pie_chart(pie_data)
+    philippines_map = create_philippines_map(map_data)
+    
+    # Sample text content
+    title = "What Constitutes to the Gender Disparity among Students from Kinder to Senior High School?"
+    description = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. At venenatis quis morbi " +
+                  "senectus ultrices at urna. Amet, facilisis mauris donec enim. Sed adipiscing " +
+                  "aliquet ut faucibus eros. Fames in diam eu sollicitudin viverra enim. " +
+                  "Egestas ac ultrices pellentesque sed ac aliquet accumsan.")
+    
+    card1_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+    card2_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+    card3_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
+    map_description = "Regional distribution of gender disparity across the Philippines"
+    
+    # Create components
+    header = create_header_banner(title, description, 13986745, pie_chart)
+    
+    card1 = create_info_card("Title for Data Viz 1", card1_content)
+    card2 = create_info_card("Title for Data Viz 3", card2_content)
+    stacked_cards = create_stacked_cards([card1, card2])
+    
+    big_card = create_info_card("Title for Data Viz 2", card3_content, height=620)
+    middle_section = create_two_column_layout(stacked_cards, big_card)
+    
+    map_chart = dcc.Graph(
+        figure=philippines_map,
+        config={'displayModeBar': False},
+        style={"height": "320px"}
+    )
+    
+    map_card = create_visualization_card("Regional Analysis", map_chart, map_description)
+    
+    # Combine all components
+    return html.Div([
+        header,
+        middle_section,
+        map_card
+    ], style={"max-width": "1200px", "margin": "0 auto", "padding": "20px"})
+
+
