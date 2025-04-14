@@ -1,89 +1,95 @@
-from dash import html, dcc
+from dash import html
+import datetime
 
 def create_header():
     return html.Header(
         children=[
+            # Container for the content
             html.Div(
                 [
-                    # ☰ Menu Button
+                    # Left side: Logo and Text
                     html.Div(
-                        "☰",
-                        id="menu-button",
-                        style={"font-size": "24px", "cursor": "pointer", "position": "relative"}
-                    ),
-                    
-                    # Dropdown Menu (Initially Hidden)
-                    html.Div(
-                        id="dropdown-menu",
-                        children=[
-                            # Close button (X) at the top right
-                            html.Div(
-                                "✕",
-                                id="close-menu",
+                        [
+                            html.Img(
+                                src="/assets/logo.png",
                                 style={
-                                    "position": "absolute",
-                                    "top": "5px",
-                                    "right": "10px",
-                                    "cursor": "pointer",
-                                    "font-size": "18px"
+                                    "height": "70px",
+                                    "margin-top": "5px",
+                                    "margin-bottom": "0px",
                                 }
                             ),
-                            html.Div("User", id="user-btn", n_clicks=0, className="dropdown-item"),
-                            html.Div("Calendar", id="calendar-btn", n_clicks=0, className="dropdown-item"),
-                            html.Div("Statistics", id="statistics-btn", n_clicks=0, className="dropdown-item"),
-                            html.Div("Settings", id="settings-btn", n_clicks=0, className="dropdown-item"),
+                            html.Div(
+                                "A Department of Education Learner Information Dashboard",
+                                style={"fontFamily": 'Montserrat',
+                                    "font-family": "Montserrat, sans-serif",
+                                    "font-size": "20px",
+                                    "color": "white",
+                                    "text-align": "left",
+                                    "white-space": "nowrap",
+                                }
+                            ),
                         ],
                         style={
-                            "position": "absolute",
-                            "top": "40px",
-                            "left": "0",
-                            "background": "white",
-                            "border": "1px solid #ddd",
-                            "border-radius": "5px",
-                            "box-shadow": "0 2px 5px rgba(0,0,0,0.2)",
-                            "display": "none",
-                            "padding": "10px",
-                            "min-width": "120px",
-                            "z-index": "1000",
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "align-items": "flex-start",
+                            "justify-content": "center",
+                            "margin-left": "5px",
+                            "margin-right": "auto",
                         }
                     ),
 
-                    html.Img(
-                        src="https://via.placeholder.com/150",
-                        style={"height": "150px", "width": "150px"},
-                    ),
+                    # Right side: Date and Menu Button
                     html.Div(
-                        [
-                            html.P("*Username*", style={"margin": "0", "font-weight": "bold"}),
-                            html.Img(
-                                src="https://via.placeholder.com/150",
-                                style={
-                                    "height": "50px",
-                                    "width": "50px",
-                                    "border-radius": "50%",
-                                    "margin-left": "10px",
+                        children=[
+                            html.Div(
+                                datetime.datetime.now().strftime("%B %d, %Y"),
+                                style={ "fontFamily": 'Montserrat',
+                                    "font-family": "Montserrat, sans-serif",
+                                    "font-size": "20px",
+                                    "color": "white",
+                                    "text-align": "right",
+                                    "margin-right": "20px",
                                 }
-                            )
+                            ),
+                            html.Div(
+                                "☰",
+                                id="menu-button",
+                                style={
+                                    "font-size": "24px",
+                                    "cursor": "pointer",
+                                    "position": "relative",
+                                    "padding-top": "20px",
+                                    "padding-bottom": "20px",
+                                    "color": "white"
+                                }
+                            ),
                         ],
-                        style={"display": "flex", "align-items": "center", "gap": "10px"},
-                    )
+                        style={
+                            "display": "flex",
+                            "align-items": "center",
+                        }
+                    ),
                 ],
                 style={
                     "display": "flex",
                     "justify-content": "space-between",
                     "align-items": "center",
-                    "width": "100%",
                     "max-width": "1200px",
+                    "width": "100%",
                     "margin": "0 auto",
-                    "position": "relative",
+                    "padding": "20px",
                 },
             )
         ],
         style={
-            "background-color": "#b3b3b3",
-            "padding": "10px 0 10px 0px",
-            "border-radius": "0 0 20px 20px",
+            "width": "100%",
+            "background": "linear-gradient(to right, #ffffff 0.5%, #084683, #DE082C)",
+            "border-radius": "0 0 40px 40px",
             "box-shadow": "0px 4px 6px -2px gray",
-            "margin": "0 30px 30px 30px",
+            "margin": "0 0 30px 0",
+            "height": "150px",
+            "display": "flex",
+            "justify-content": "center",
         },
     )

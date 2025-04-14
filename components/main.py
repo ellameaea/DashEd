@@ -89,24 +89,24 @@ def create_header_banner(title, description, total_students, pie_chart_fig):
     return html.Div([
         # Left side - Title and description
         html.Div([
-            html.H2(title, style={"color": "white", "font-size": "24px", "margin-bottom": "15px"}),
+            html.H2(title, style={"fontFamily": "Revue", "color": "white", "font-size": "24px", "margin-bottom": "15px"}),
             html.P(
                 description,
-                style={"color": "white", "font-size": "12px", "line-height": "1.4", "max-width": "90%"}
+                style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "line-height": "1.4", "max-width": "90%"}
             ),
-            html.A("Read Full Article →", href="#", style={"color": "white", "font-size": "12px", "margin-top": "10px", "display": "block"})
+            html.A("Read Full Article →", href="#", style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "margin-top": "10px", "display": "block"})
         ], style={"width": "60%", "padding": "20px 30px"}),
         
         # Right side - Big number and chart
         html.Div([
-            html.H2(f"{total_students:,}", style={"color": "white", "font-size": "32px", "font-weight": "bold", "margin-bottom": "5px", "text-align": "center"}),
-            html.P("Total Students", style={"color": "white", "font-size": "12px", "text-align": "center"}),
+            html.H2(f"{total_students:,}", style={"fontFamily": "Revue", "color": "white", "font-size": "32px", "font-weight": "bold", "margin-bottom": "5px", "text-align": "center"}),
+            html.P("Total Students", style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "text-align": "center"}),
             dcc.Graph(
                 figure=pie_chart_fig,
                 config={'displayModeBar': False},
                 style={"height": "150px", "width": "150px", "margin": "0 auto"}
             )
-        ], style={"width": "40%", "padding": "20px", "display": "flex", "flex-direction": "column", "justify-content": "center"})
+        ], style={"fontFamily": 'Montserrat', "width": "40%", "padding": "20px", "display": "flex", "flex-direction": "column", "justify-content": "center"})
     ], style={
         "display": "flex", 
         "background-image": "linear-gradient(90deg, rgba(45, 113, 184, 0.9), rgba(45, 113, 184, 0.9)), url(/assets/library-background.jpg)",
@@ -119,8 +119,8 @@ def create_header_banner(title, description, total_students, pie_chart_fig):
 def create_info_card(title, content, height=300, border_color="#e6617c"):
     """Create reusable info card"""
     return html.Div([
-        html.H3(title, style={"color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
-        html.P(content, style={"font-size": "12px", "color": "#333"})
+        html.H3(title, style={"fontFamily": "Revue", "color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
+        html.P(content, style={"fontFamily": 'Montserrat', "font-size": "12px", "color": "#333"})
     ], style={
         "padding": "15px 20px",
         "background": "white",
@@ -133,11 +133,11 @@ def create_info_card(title, content, height=300, border_color="#e6617c"):
 def create_visualization_card(title, chart_component, description=None, height=350, border_color="#e6617c"):
     """Create reusable visualization card with optional description"""
     children = [
-        html.H3(title, style={"color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
+        html.H3(title, style={"fontFamily": "Revue", "color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
     ]
     
     if description:
-        children.append(html.P(description, style={"font-size": "12px", "color": "#333", "margin-bottom": "10px"}))
+        children.append(html.P(description, style={"fontFamily": 'Montserrat', "font-size": "12px", "color": "#333", "margin-bottom": "10px"}))
     
     children.append(chart_component)
     
