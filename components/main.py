@@ -45,6 +45,8 @@ def create_pie_chart(data, hole_size=0.4, height=200, colors=None):
         margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
         height=height,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
     )
     
     return fig
@@ -109,47 +111,88 @@ def create_header_banner(title, description, total_students, pie_chart_fig):
         ], style={"fontFamily": 'Montserrat', "width": "40%", "padding": "20px", "display": "flex", "flex-direction": "column", "justify-content": "center"})
     ], style={
         "display": "flex", 
-        "background-image": "linear-gradient(90deg, rgba(45, 113, 184, 0.9), rgba(45, 113, 184, 0.9)), url(/assets/library-background.jpg)",
+        "backgroundImage": "linear-gradient(154deg,rgba(217, 217, 217, 1) 0%, rgba(8, 70, 131, 0.64) 55%, rgba(222, 8, 44, 1) 100%), url('/assets/library-background.png')",
         "background-size": "cover",
-        "border-radius": "10px",
+        "border-radius": "24px",
         "margin-bottom": "20px",
-        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)"
-    })
-
-def create_info_card(title, content, height=300, border_color="#e6617c"):
-    """Create reusable info card"""
-    return html.Div([
-        html.H3(title, style={"fontFamily": "Revue", "color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
-        html.P(content, style={"fontFamily": 'Montserrat', "font-size": "12px", "color": "#333"})
-    ], style={
-        "padding": "15px 20px",
-        "background": "white",
-        "border-radius": "8px",
         "box-shadow": "0 2px 5px rgba(0,0,0,0.1)",
-        "border": f"1px solid {border_color}",
-        "height": f"{height}px"  # Fixed height for consistent sizing
+        "height": "100%",
+        "width": "100%"
     })
 
-def create_visualization_card(title, chart_component, description=None, height=350, border_color="#e6617c"):
-    """Create reusable visualization card with optional description"""
+def create_info_card(title, content, height=300, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
+    """Create reusable info card with gradient border"""
+    return html.Div([
+        # Inner card content
+        html.Div([
+            html.H3(title, style={
+                "fontFamily": "Revue",
+                "color": "#2D71B8",
+                "fontSize": "16px",
+                "fontWeight": "bold",
+                "marginBottom": "10px"
+            }),
+            html.P(content, style={
+                "fontFamily": 'Montserrat',
+                "fontSize": "12px",
+                "color": "#333"
+            })
+        ], style={
+            "padding": "15px 20px",
+            "background": "white",
+            "borderRadius": "8px",
+            "height": f"{height}px",  # Fixed height for consistent sizing
+            "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+        })
+    ], style={
+        "background": gradient,
+        "padding": "2px",  # Thickness of the gradient border
+        "borderRadius": "10px",
+        "display": "inline-block"
+    })
+
+
+def create_visualization_card(title, chart_component, description=None, height=350, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
+    """Create reusable visualization card with optional description and gradient border"""
+    # Inner card content
     children = [
-        html.H3(title, style={"fontFamily": "Revue", "color": "#2D71B8", "font-size": "16px", "font-weight": "bold", "margin-bottom": "10px"}),
+        html.H3(title, style={
+            "fontFamily": "Revue",
+            "color": "#2D71B8",
+            "fontSize": "16px",
+            "fontWeight": "bold",
+            "marginBottom": "10px"
+        }),
     ]
     
     if description:
-        children.append(html.P(description, style={"fontFamily": 'Montserrat', "font-size": "12px", "color": "#333", "margin-bottom": "10px"}))
+        children.append(html.P(description, style={
+            "fontFamily": 'Montserrat',
+            "fontSize": "12px",
+            "color": "#333",
+            "marginBottom": "10px"
+        }))
     
     children.append(chart_component)
     
-    return html.Div(children, style={
-        "width": "100%",
-        "background": "white",
-        "border-radius": "8px",
-        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)",
-        "padding": "10px",
-        "border": f"1px solid {border_color}",
-        "height": f"{height}px" if height else "auto"
+    # Gradient-bordered box
+    return html.Div([
+        html.Div(children, style={
+            "width": "100%",
+            "background": "white",
+            "borderRadius": "8px",
+            "boxShadow": "0 2px 5px rgba(0,0,0,0.1)",
+            "padding": "10px",
+            "height": f"{height}px" if height else "auto"
+        })
+    ], style={
+        "background": gradient,
+        "padding": "2px",
+        "borderRadius": "10px",
+        "display": "inline-block",
+        "width": "100%"
     })
+
 
 def create_two_column_layout(left_component, right_component):
     """Create a reusable two-column layout"""
