@@ -223,7 +223,11 @@ def create_visualization_card(title, chart_component, description=None, height=3
             "marginBottom": "10px"
         }))
     
-    children.append(chart_component)
+    children.append(html.Div(chart_component, style={
+        "flexGrow": "1",
+        "height": "100%",
+        "overflow": "hidden"
+    }))
     
     # Gradient-bordered box
     return html.Div([
@@ -278,7 +282,7 @@ def create_main_content():
     map_chart = dcc.Graph(
         figure=map_data,
         config={'displayModeBar': False},
-        style={"height": "320px"}
+        style={"height": "1000",'width':'200',"padding":"0","margin":"0"}
     )
     
     # Sample text content
@@ -294,7 +298,7 @@ def create_main_content():
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
-    map_description = "Regional distribution of gender disparity across the Philippines"
+ 
     
     # Create components
     header = create_header_banner(title, description, 13986745, pie_chart)
@@ -309,7 +313,8 @@ def create_main_content():
     map_card = create_visualization_card(
         "Regional Gender Disparity in Enrollment",
         map_chart,
-        "This heatmap highlights gender enrollment disparities per region across the Philippines."
+        "This heatmap highlights gender enrollment disparities per region across the Philippines.",
+        height=550
     )
     ...
     
