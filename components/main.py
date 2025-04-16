@@ -3,6 +3,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
+import json
+import os
 
 # ===== DATA FUNCTIONS =====
 def get_pie_data():
@@ -13,19 +15,67 @@ def get_pie_data():
     }
 
 def get_philippines_map_data():
-    """Generate sample Philippines map data - replace with real data in production"""
-    regions = ['NCR', 'CAR', 'Region I', 'Region II', 'Region III', 'Region IV-A', 
-               'Region IV-B', 'Region V', 'Region VI', 'Region VII', 'Region VIII', 
-               'Region IX', 'Region X', 'Region XI', 'Region XII', 'Region XIII', 'BARMM']
+
+    current_directory = os.getcwd()
+    cleaned_file = os.path.join(current_directory, 'CSV Files/CLEANED_SY2023_Enrollment.csv')
+    json_file = os.path.join(current_directory, 'ph.json')
+
+    df = pd.read_csv(cleaned_file)
+    with open(json_file) as f:
+        ph_geojson = json.load(f)
+
+    female_cols = [col for col in df.columns if 'Female' in col]
+    male_cols = [col for col in df.columns if 'Male' in col]
+
+    region_gender = df.groupby('Region')[female_cols + male_cols].sum()
+    region_gender['Disparity'] = abs(region_gender[female_cols].sum(axis=1) - region_gender[male_cols].sum(axis=1))
+
+    region_gender = region_gender[['Disparity']].reset_index()
+
+    region_mapping = {
+        'Region I': 'Ilocos',
+        'Region II': 'Cagayan Valley',
+        'Region III': 'Central Luzon',
+        'Region IV-A': 'Calabarzon',
+        'MIMAROPA': 'Mimaropa',
+        'Region V': 'Bicol',
+        'Region VI': 'Western Visayas',
+        'Region VII': 'Central Visayas',
+        'Region VIII': 'Eastern Visayas',
+        'Region IX': 'Zamboanga Peninsula',
+        'Region X': 'Northern Mindanao',
+        'Region XI': 'Davao',
+        'Region XII': 'Soccsksargen',
+        'NCR': 'National Capital Region',
+        'CAR': 'Cordillera Administrative Region',
+        'BARMM': 'Autonomous Region in Muslim Mindanao',
+        'CARAGA': 'Caraga'
+    }
+
+    region_gender['id'] = region_gender['Region'].map(region_mapping)
+
+    fig = px.choropleth_mapbox(
+        region_gender,
+        geojson=ph_geojson,
+        locations='id',
+        color='Disparity',
+        featureidkey='properties.name',
+        center={'lat': 12.8797, 'lon': 121.7740},
+        mapbox_style='carto-positron',
+        zoom=5,
+        color_continuous_scale='Plasma',
+        labels={'Disparity': 'Gender Disparity'},
+        hover_data={'Region': True, 'Disparity': True}
+    )
+
+    fig.update_traces(
+        hovertemplate="<b>%{location}</b><br>" +
+                      "Gender Disparity: %{z}<extra></extra>"
+    )
     
-    # Random values for demonstration
-    values = np.random.randint(1, 5, size=len(regions))
-    
-    # Create DataFrame
-    return pd.DataFrame({
-        'region': regions,
-        'value': values
-    })
+    fig.update_layout(margin={'r':0,'t':0,'l':0,'b':0})
+    return fig
+
 
 # ===== CHART CREATION FUNCTIONS =====
 def create_pie_chart(data, hole_size=0.4, height=200, colors=None):
@@ -225,7 +275,11 @@ def create_main_content():
     
     # Create charts
     pie_chart = create_pie_chart(pie_data)
-    philippines_map = create_philippines_map(map_data)
+    map_chart = dcc.Graph(
+        figure=map_data,
+        config={'displayModeBar': False},
+        style={"height": "320px"}
+    )
     
     # Sample text content
     title = "What Constitutes to the Gender Disparity among Students from Kinder to Senior High School?"
@@ -252,13 +306,12 @@ def create_main_content():
     big_card = create_info_card("Title for Data Viz 2", card3_content, height=620)
     middle_section = create_two_column_layout(stacked_cards, big_card)
     
-    map_chart = dcc.Graph(
-        figure=philippines_map,
-        config={'displayModeBar': False},
-        style={"height": "320px"}
+    map_card = create_visualization_card(
+        "Regional Gender Disparity in Enrollment",
+        map_chart,
+        "This heatmap highlights gender enrollment disparities per region across the Philippines."
     )
-    
-    map_card = create_visualization_card("Regional Analysis", map_chart, map_description)
+    ...
     
     # Combine all components
     return html.Div([
