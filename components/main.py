@@ -282,7 +282,7 @@ def create_main_content():
     map_chart = dcc.Graph(
         figure=map_data,
         config={'displayModeBar': False},
-        style={"height": "1000",'width':'200',"padding":"0","margin":"0"}
+        style={"height": "800px",'width':'200',"padding":"0","margin":"0"}
     )
     
     # Sample text content
@@ -314,7 +314,7 @@ def create_main_content():
         "Regional Gender Disparity in Enrollment",
         map_chart,
         "This heatmap highlights gender enrollment disparities per region across the Philippines.",
-        height=550
+        height=890
     )
     ...
     
