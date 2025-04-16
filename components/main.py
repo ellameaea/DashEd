@@ -45,6 +45,8 @@ def create_pie_chart(data, hole_size=0.4, height=200, colors=None):
         margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
         height=height,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
     )
     
     return fig
