@@ -4,7 +4,7 @@ import dash
 from dash import dcc, html, Input, Output
 
 # Load your dataset
-combined_population_df = pd.read_csv('CSV Files/combined_population.csv')
+combined_population_df = pd.read_csv('CSV Files/combined_population_2023.csv')
 
 # Define available grade levels
 grade_levels = ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12']

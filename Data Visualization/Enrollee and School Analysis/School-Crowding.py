@@ -27,29 +27,35 @@ df['Total Enrollees'] = df[enrollee_columns].sum(axis=1)
 # Group by region and aggregate
 region_summary = df.groupby('Region').agg({
     'Total Enrollees': 'sum',
-    'BEIS School ID': 'nunique'  # Count unique school IDs for number of schools
+    'BEIS School ID': 'nunique'
 }).reset_index()
 
-# Rename the BEIS School ID column
+# Rename column
 region_summary.rename(columns={'BEIS School ID': 'Number of Schools'}, inplace=True)
 
-# Sort by Total Enrollees in descending order
-region_summary = region_summary.sort_values(by='Total Enrollees', ascending=False)
+# Calculate crowding metric
+region_summary['Enrollees per School'] = (region_summary['Number of Schools'] / region_summary['Total Enrollees']) * 100
 
-# Calculate the "Enrollees per School" ratio for each region
-region_summary['Enrollees per School'] =  (region_summary['Number of Schools'] / region_summary['Total Enrollees'])*100
+# Sort by Enrollees per School
+region_summary = region_summary.sort_values(by='Enrollees per School', ascending=False).reset_index(drop=True)
 
-# Create grouped bar chart with the ratio metric
+# Generate bar colors
+colors = []
+for idx in range(len(region_summary)):
+    if idx == 0 or idx == len(region_summary) - 1:
+        colors.append('green')  # Highest and lowest
+    else:
+        colors.append('#90ee90')  # Light green for middle values
+
+# Create bar chart
 fig = go.Figure(data=[
-    #go.Bar(name='Number of Schools', x=region_summary['Region'],y=region_summary['Number of Schools'], marker_color='steelblue', text=region_summary['Number of Schools'],textposition='auto'),
-    #go.Bar(name='Total Enrollees', x=region_summary['Region'], y=region_summary['Total Enrollees'], marker_color='indianred', text=region_summary['Total Enrollees'], textposition='auto'),
     go.Bar(
         name='Enrollees per School',
         x=region_summary['Region'],
         y=region_summary['Enrollees per School'],
-        marker_color='green',
-        text=region_summary['Enrollees per School'].round(2),  
-        textposition='auto'
+        marker_color=colors,
+        text=region_summary['Enrollees per School'].round(2),
+        textposition='outside'  # Show above the bars
     )
 ])
 
@@ -60,7 +66,9 @@ fig.update_layout(
     yaxis_title='Percentage (%)',
     barmode='group',
     legend=dict(title='Metric'),
-    xaxis_tickangle=-45
+    xaxis_tickangle=-45,
+    uniformtext_minsize=8,
+    uniformtext_mode='hide'
 )
 
 # Show the plot
