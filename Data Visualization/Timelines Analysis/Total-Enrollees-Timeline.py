@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 import os
 import re
+import plotly.io as pio
 
 def load_and_process_data(directory):
     data = []
@@ -35,6 +36,8 @@ def plot_enrollment_trend(data):
                   markers=True)
     fig.update_traces(line=dict(color='blue', width=2), marker=dict(size=8))
     fig.update_layout(title_x=0.5)
+    
+    fig.update_xaxes(dtick=1, tickformat='.0f')
     fig.show()
 
 # Set the folder containing the cleaned enrollment files
