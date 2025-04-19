@@ -30,11 +30,11 @@ def create_density_content():
 
 
     # Create components
-    density_main = create_info_card("Title for Data Viz 1", card1_content)
-    card1 = create_info_card("Title for Data Viz 2", card2_content)
+    density_main = create_info_card("Title for Data Viz 1", card1_content, height = 820, width = 950)
+    card1 = create_info_card("Title for Data Viz 2", card2_content, height = 820, width = 350)
 
     main_section = create_two_column_layout(density_main, card1)
-    bottom_section = create_info_card("Title for Data Viz 3", card3_content)
+    bottom_section = create_info_card("Title for Data Viz 3", card3_content, height = 500, width = 1300)
     
     # Combine all components
     return html.Div([
