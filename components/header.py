@@ -52,18 +52,6 @@ def create_header():
                                     "margin-right": "20px",
                                 }
                             ),
-                            html.Div(
-                                "☰",
-                                id="menu-button",
-                                style={
-                                    "font-size": "24px",
-                                    "cursor": "pointer",
-                                    "position": "relative",
-                                    "padding-top": "20px",
-                                    "padding-bottom": "20px",
-                                    "color": "white"
-                                }
-                            ),
                         ],
                         style={
                             "display": "flex",
@@ -75,17 +63,14 @@ def create_header():
                     "display": "flex",
                     "justify-content": "space-between",
                     "align-items": "center",
-                    "max-width": "1200px",
                     "width": "100%",
-                    "margin": "0 auto",
-                    "padding": "20px",
+                    "padding": "0 70px",
                 },
             )
         ],
         style={
             "width": "100%",
             "background": "linear-gradient(to right, #ffffff 0.5%, #084683, #DE082C)",
-            "border-radius": "0 0 40px 40px",
             "box-shadow": "0px 4px 6px -2px gray",
             "margin": "0 0 30px 0",
             "height": "150px",
