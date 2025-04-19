@@ -7,12 +7,6 @@ import json
 import os
 
 # ===== DATA FUNCTIONS =====
-def get_pie_data():
-    """Return sample data for pie chart"""
-    return {
-        'Category': ['Category 1', 'Category 2', 'Category 3'],
-        'Value': [60, 30, 10]
-    }
 
 def get_philippines_map_data():
 
@@ -77,30 +71,6 @@ def get_philippines_map_data():
     return fig
 
 
-# ===== CHART CREATION FUNCTIONS =====
-def create_pie_chart(data, hole_size=0.4, height=200, colors=None):
-    """Create a reusable pie chart"""
-    if colors is None:
-        colors = ['#2D71B8', '#F7A823', '#EB5757']
-        
-    df = pd.DataFrame(data)
-    fig = go.Figure(data=[go.Pie(
-        labels=df['Category'],
-        values=df['Value'],
-        hole=hole_size,
-        marker_colors=colors
-    )])
-    
-    fig.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
-        showlegend=False,
-        height=height,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-    )
-    
-    return fig
-
 def create_philippines_map(data, color_scale=None, height=350):
     """Create a reusable Philippines map visualization"""
     if color_scale is None:
@@ -134,41 +104,6 @@ def create_philippines_map(data, color_scale=None, height=350):
     )
     
     return fig
-
-# ===== UI COMPONENT FUNCTIONS =====
-def create_header_banner(title, description, total_students, pie_chart_fig):
-    """Create reusable header banner with title, description and chart"""
-    return html.Div([
-        # Left side - Title and description
-        html.Div([
-            html.H2(title, style={"fontFamily": "Revue", "color": "white", "font-size": "24px", "margin-bottom": "15px"}),
-            html.P(
-                description,
-                style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "line-height": "1.4", "max-width": "90%"}
-            ),
-            html.A("Read Full Article →", href="#", style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "margin-top": "10px", "display": "block"})
-        ], style={"width": "60%", "padding": "20px 30px"}),
-        
-        # Right side - Big number and chart
-        html.Div([
-            html.H2(f"{total_students:,}", style={"fontFamily": "Revue", "color": "white", "font-size": "32px", "font-weight": "bold", "margin-bottom": "5px", "text-align": "center"}),
-            html.P("Total Students", style={"fontFamily": 'Montserrat', "color": "white", "font-size": "12px", "text-align": "center"}),
-            dcc.Graph(
-                figure=pie_chart_fig,
-                config={'displayModeBar': False},
-                style={"height": "150px", "width": "150px", "margin": "0 auto"}
-            )
-        ], style={"fontFamily": 'Montserrat', "width": "40%", "padding": "20px", "display": "flex", "flex-direction": "column", "justify-content": "center"})
-    ], style={
-        "display": "flex", 
-        "backgroundImage": "linear-gradient(154deg,rgba(217, 217, 217, 1) 0%, rgba(8, 70, 131, 0.64) 55%, rgba(222, 8, 44, 1) 100%), url('/assets/library-background.png')",
-        "background-size": "cover",
-        "border-radius": "24px",
-        "margin-bottom": "20px",
-        "box-shadow": "0 2px 5px rgba(0,0,0,0.1)",
-        "height": "100%",
-        "width": "100%"
-    })
 
 def create_info_card(title, content, height=300, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
     """Create reusable info card with gradient border"""
@@ -251,8 +186,8 @@ def create_visualization_card(title, chart_component, description=None, height=3
 def create_two_column_layout(left_component, right_component):
     """Create a reusable two-column layout"""
     return html.Div([
-        html.Div([left_component], style={"width": "48%"}),
-        html.Div([right_component], style={"width": "48%"})
+        html.Div([left_component], style={"width": "63%"}),
+        html.Div([right_component], style={"width": "33%"})
     ], style={
         "display": "flex", 
         "justify-content": "space-between",
@@ -271,29 +206,20 @@ def create_stacked_cards(cards_list):
     )
 
 # ===== MAIN LAYOUT FUNCTION =====
-def create_main_content():
+def create_overview_content():
     """Create the main dashboard content using reusable components"""
     # Get data
-    pie_data = get_pie_data()
     map_data = get_philippines_map_data()
     
     # Create charts
-    pie_chart = create_pie_chart(pie_data)
     map_chart = dcc.Graph(
         figure=map_data,
         config={'displayModeBar': False},
         style={"height": "800px",'width':'200',"padding":"0","margin":"0"}
     )
     
-    # Sample text content
-    title = "What Constitutes to the Gender Disparity among Students from Kinder to Senior High School?"
-    description = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. At venenatis quis morbi " +
-                  "senectus ultrices at urna. Amet, facilisis mauris donec enim. Sed adipiscing " +
-                  "aliquet ut faucibus eros. Fames in diam eu sollicitudin viverra enim. " +
-                  "Egestas ac ultrices pellentesque sed ac aliquet accumsan.")
-    
-    card1_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
-    card2_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+    card1_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
+    card2_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
     card3_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
@@ -301,14 +227,12 @@ def create_main_content():
  
     
     # Create components
-    header = create_header_banner(title, description, 13986745, pie_chart)
-    
-    card1 = create_info_card("Title for Data Viz 1", card1_content)
-    card2 = create_info_card("Title for Data Viz 3", card2_content)
+    card1 = create_info_card("Title for Data Viz 1", card1_content, height = 300)
+    card2 = create_info_card("Title for Data Viz 2", card2_content, height = 500)
     stacked_cards = create_stacked_cards([card1, card2])
     
-    big_card = create_info_card("Title for Data Viz 2", card3_content, height=620)
-    middle_section = create_two_column_layout(stacked_cards, big_card)
+    big_card = create_info_card("Title for Data Viz 3", card3_content, height=820)
+    main_section = create_two_column_layout(big_card, stacked_cards)
     
     map_card = create_visualization_card(
         "Regional Gender Disparity in Enrollment",
@@ -320,9 +244,8 @@ def create_main_content():
     
     # Combine all components
     return html.Div([
-        header,
-        middle_section,
+        main_section,
         map_card
-    ], style={"max-width": "1200px", "margin": "0 auto", "padding": "20px"})
+    ], style={"max-width": "1400px", "margin": "0 auto", "padding": "20px"})
 
 
