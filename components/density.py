@@ -17,7 +17,7 @@ def create_two_column_layout(left_component, right_component):
     ], style={
         "display": "flex", 
         "justify-content": "space-between",
-        "margin-bottom": "20px"
+        "margin-bottom": "20px",
     })
 
 def create_density_content():
@@ -30,11 +30,11 @@ def create_density_content():
 
 
     # Create components
-    density_main = create_info_card("Title for Data Viz 1", card1_content, height = 820, width = 950)
+    density_main = create_info_card("Title for Data Viz 1", card1_content, height = 820, width = 880)
     card1 = create_info_card("Title for Data Viz 2", card2_content, height = 820, width = 350)
 
     main_section = create_two_column_layout(density_main, card1)
-    bottom_section = create_info_card("Title for Data Viz 3", card3_content, height = 500, width = 1300)
+    bottom_section = create_info_card("Title for Data Viz 3", card3_content, height = 500, width = 1260)
     
     # Combine all components
     return html.Div([
