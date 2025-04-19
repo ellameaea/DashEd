@@ -105,7 +105,7 @@ def create_philippines_map(data, color_scale=None, height=350):
     
     return fig
 
-def create_info_card(title, content, height=300, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
+def create_info_card(title, content, height=300, width=None, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
     """Create reusable info card with gradient border"""
     return html.Div([
         # Inner card content
@@ -127,6 +127,7 @@ def create_info_card(title, content, height=300, gradient="linear-gradient(133de
             "background": "white",
             "borderRadius": "8px",
             "height": f"{height}px",  # Fixed height for consistent sizing
+            "width": f"{width}px" if width else "auto",
             "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
         })
     ], style={
