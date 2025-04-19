@@ -42,6 +42,7 @@ def plot_enrollment_trend_by_gender(data):
 
     fig.update_traces(line=dict(width=2), marker=dict(size=8))
     fig.update_layout(title_x=0.5)
+    fig.update_xaxes(dtick=1, tickformat='.0f')
     fig.show()
 
 # Set the folder containing the cleaned enrollment files

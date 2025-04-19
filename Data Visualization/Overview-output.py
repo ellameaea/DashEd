@@ -168,7 +168,9 @@ app.layout = html.Div([
                 go.Pie(
                     labels=list(combined_totals.keys()),
                     values=list(combined_totals.values()),
-                    hole=0.3  # Optional: Makes it a donut chart
+                    hole=0.5,
+                    textfont=dict(size=10)
+                    #textinfo='none' 
                 )
             ],
             layout=go.Layout(

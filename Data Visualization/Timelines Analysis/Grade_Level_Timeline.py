@@ -42,7 +42,7 @@ def load_and_process_data(directory):
                 'Kindergarten': kinder_total,
                 'ELEM': elem_total,
                 'JHS': jhs_total,
-                'SHS': shs_total  # ✅ Renamed here
+                'SHS': shs_total 
             })
 
     return pd.DataFrame(data)
@@ -69,6 +69,7 @@ def plot_enrollment_by_level(data):
 
     fig.update_traces(line=dict(width=2), marker=dict(size=8))
     fig.update_layout(title_x=0.5)
+    fig.update_xaxes(dtick=1, tickformat='.0f')
     fig.show()
 
 # Folder containing the cleaned CSV files
