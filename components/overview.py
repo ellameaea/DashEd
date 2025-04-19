@@ -185,15 +185,35 @@ def create_visualization_card(title, chart_component, description=None, height=3
 
 
 def create_two_column_layout(left_component, right_component):
-    """Create a reusable two-column layout"""
+    """Create a reusable two-column layout with responsive and balanced design."""
     return html.Div([
-        html.Div([left_component], style={"width": "63%"}),
-        html.Div([right_component], style={"width": "33%"})
+        html.Div(
+            [left_component],
+            style={
+                "flex": "1 1 60%",
+                "minWidth": "300px",
+                "display": "flex",
+                "flexDirection": "column"
+            }
+        ),
+        html.Div(
+            [right_component],
+            style={
+                "flex": "1 1 35%",
+                "minWidth": "250px",
+                "display": "flex",
+                "flexDirection": "column"
+            }
+        )
     ], style={
-        "display": "flex", 
-        "justify-content": "space-between",
-        "margin-bottom": "20px"
+        "display": "flex",
+        "flexWrap": "wrap",            
+        "justifyContent": "space-between",
+        "alignItems": "stretch",       
+        "gap": "20px",                 
+        "marginBottom": "20px"
     })
+
 
 def create_stacked_cards(cards_list):
     """Create a stack of cards in a single column"""
@@ -241,7 +261,6 @@ def create_overview_content():
         "This heatmap highlights gender enrollment disparities per region across the Philippines.",
         height=890
     )
-    ...
     
     # Combine all components
     return html.Div([
