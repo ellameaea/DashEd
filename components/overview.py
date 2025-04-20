@@ -5,12 +5,32 @@ import pandas as pd
 import numpy as np
 import json
 import os
-
-
+import sys
+import importlib.util
 
 
 
 # ===== DATA FUNCTIONS =====
+def import_total_enrollees_timeline():
+    module_path = os.path.join(
+        os.path.dirname(__file__),
+        '..',  # Go up one level from components/
+        'Data Visualization',
+        'Timelines Analysis',
+        'Total-Enrollees-Timeline.py'
+    )
+    module_path = os.path.abspath(module_path)  # Resolve relative path to absolute
+
+    spec = importlib.util.spec_from_file_location("total_enrollees_timeline", module_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["total_enrollees_timeline"] = module
+    spec.loader.exec_module(module)
+    return module
+
+# Import the module and functions
+timeline_module = import_total_enrollees_timeline()
+get_enrollment_trend_figure = timeline_module.get_enrollment_trend_figure
+get_latest_total_enrollees = timeline_module.get_latest_total_enrollees
 
 def get_philippines_map_data():
 
