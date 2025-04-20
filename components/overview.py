@@ -270,7 +270,7 @@ def create_overview_content():
     card3_graph = dcc.Graph(
     figure=get_enrollment_trend_figure(),
     config={'displayModeBar': False},
-    style={"height": "500px", "width": "800px"}
+    style={"height": "450px", "width": "800px"}
 )
  
     
@@ -278,6 +278,7 @@ def create_overview_content():
     card1 = create_info_card("Title for Data Viz 1", card1_content, height = 300)
     card2 = create_info_card("Title for Data Viz 2", card2_content, height = 500)
     stacked_cards = create_stacked_cards([card1, card2])
+
     number= get_latest_total_enrollees()
     title = html.H3([
     html.Span(f"{number:,} ", style={
@@ -291,8 +292,17 @@ def create_overview_content():
     "Enrollees"
     ])
 
+    card3_text = html.P(
+        "Expect a",
+        style={
+            "fontFamily": "Montserrat",
+            "fontSize": "14px",
+            "color": "#333",
+            "marginTop": "15px"
+        }
+    )
 
-    big_card = create_info_card(title, card3_graph, height=820)
+    big_card = create_info_card(title, [card3_graph, card3_text], height=820)
     main_section = create_two_column_layout(big_card, stacked_cards)
     
     map_card = create_visualization_card(
