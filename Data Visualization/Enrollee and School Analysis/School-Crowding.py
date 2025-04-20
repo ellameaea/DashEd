@@ -33,13 +33,14 @@ region_summary = df.groupby('Region').agg({
 # Rename column
 region_summary.rename(columns={'BEIS School ID': 'Number of Schools'}, inplace=True)
 
-# Calculate crowding metric
+# Calculate crowding metric!!
+# calculation for school per enrolleee
 region_summary['Enrollees per School'] = (region_summary['Number of Schools'] / region_summary['Total Enrollees']) * 100
 
-# Sort by Enrollees per School
+# Sorts by School per Enrollee
 region_summary = region_summary.sort_values(by='Enrollees per School', ascending=False).reset_index(drop=True)
 
-# Generate bar colors
+# Generates bar colors
 colors = []
 for idx in range(len(region_summary)):
     if idx == 0 or idx == len(region_summary) - 1:
@@ -47,28 +48,28 @@ for idx in range(len(region_summary)):
     else:
         colors.append('#90ee90')  # Light green for middle values
 
-# Create bar chart
+# Formats each bar of the chart
 fig = go.Figure(data=[
     go.Bar(
-        name='Enrollees per School',
-        x=region_summary['Region'],
-        y=region_summary['Enrollees per School'],
-        marker_color=colors,
-        text=region_summary['Enrollees per School'].round(2),
+        name='Enrollees per School', # Bar name
+        x=region_summary['Region'], # X-axis values
+        y=region_summary['Enrollees per School'], # Y-axis values
+        marker_color=colors, # Bar colors
+        text=region_summary['Enrollees per School'].round(2), # Text on bars
         textposition='outside'  # Show above the bars
     )
 ])
 
-# Update layout
+# Updates the entire chart
 fig.update_layout(
-    title='Measures of School Crowding per Region',
-    xaxis_title='Region',
-    yaxis_title='Percentage (%)',
-    barmode='group',
-    legend=dict(title='Metric'),
-    xaxis_tickangle=-45,
-    uniformtext_minsize=8,
-    uniformtext_mode='hide'
+    title='Measures of School Crowding per Region', # Title of the chart
+    xaxis_title='Region', # X-axis title
+    yaxis_title='Percentage (%)', # Y-axis title
+    barmode='group', # Bar mode
+    legend=dict(title='Metric'), # Legend title
+    xaxis_tickangle=-45, # X-axis tick angle (angle of text on x-axis)
+    uniformtext_minsize=8, # Minimum text size
+    uniformtext_mode='hide' # Hides text if it doesn't fit
 )
 
 # Show the plot

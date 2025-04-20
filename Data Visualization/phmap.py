@@ -3,7 +3,7 @@ import plotly.express as px
 import json
 import os
  
-# Load your CSV data
+# Load the dataset (change later to let user select dataset!!)
 current_directory = os.getcwd()
 cleaned_file = os.path.join(current_directory, 'CSV Files/CLEANED_SY2023_Enrollment.csv')
 df = pd.read_csv(cleaned_file)
@@ -52,17 +52,18 @@ for feature in ph_geojson['features'][:5]:
 
 # Create the choropleth map
 fig = px.choropleth_mapbox(
-    region_enrollment,
-    geojson=ph_geojson,
-    locations='id',
-    color='Total_Enrollees',
-    featureidkey='properties.name',
-    center={'lat': 12.8797, 'lon': 121.7740},
-    mapbox_style='carto-positron',
-    zoom=5,
-    color_continuous_scale='Plasma',
-    labels={'Total_Enrollees': 'Total Enrollees'},
-    hover_data={'Region': True, 'Total_Enrollees': True}
+    region_enrollment, # DataFrame with region names and total enrollees
+    geojson=ph_geojson, # GeoJSON data
+    locations='id', # Column in DataFrame with region names
+    color='Total_Enrollees', # Column in DataFrame with total enrollees
+    featureidkey='properties.name', # Key in GeoJSON features
+    center={'lat': 12.8797, 'lon': 121.7740}, # Center of the Philippines
+    mapbox_style='carto-positron', # Mapbox style
+    zoom=5, # Zoom level
+    color_continuous_scale='Plasma', # Color scale
+    labels={'Total_Enrollees': 'Total Enrollees'}, # Label for color bar
+    hover_data={'Region': True, 
+                'Total_Enrollees': True}
 )
 
 # Use update_traces() to set the hovertemplate
@@ -71,5 +72,5 @@ fig.update_traces(
                   "Total Enrollees: %{z}<extra></extra>"
 )
 
-fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
+fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0}) # adjust margins
 fig.show()

@@ -18,75 +18,92 @@ app.layout = html.Div([
 
     html.Div([
         dcc.Dropdown(
-            id='grade-dropdown',
-            options=[{'label': grade, 'value': grade} for grade in grade_levels],
-            value='G11',
-            clearable=False,
-            style={'width': '50%'}
+            id='grade-dropdown', # Dropdown for selecting grade level
+            options=[{'label': grade, # Label for each option
+                      'value': grade}  # Value for each option
+                      for grade in grade_levels], # List of options
+            value='G11', # Default value
+            clearable=False, # Disable clearing of selection
+            style={'width': '50%'} # styles of the dropdown
         ),
-    ], className="d-flex justify-content-center mt-3"),
+    ], className="d-flex justify-content-center mt-3"), # Centers the dropdown
 
     html.Div([
-        dcc.Graph(id='heatmap', style={'height': '800px'})
+        dcc.Graph(id='heatmap', style={'height': '800px'}) # Heatmap graph style
     ], className="mt-4 px-4"),
 
-    html.H4("Total Enrollees per Grade Level", className="text-center mt-5"),
+    html.H4("Total Enrollees per Grade Level", className="text-center mt-5"), # Title for bar chart
 
     html.Div([
-        dcc.Graph(id='bar-chart')
+        dcc.Graph(id='bar-chart') # Bar chart for total enrollees per grade level
     ], className="mt-3 px-4")
 ])
 
 # Define the heatmap callback
 @app.callback(
-    Output('heatmap', 'figure'),
-    Input('grade-dropdown', 'value')
+    Output('heatmap', 'figure'), # Output for the heatmap
+    Input('grade-dropdown', 'value') # Input for the selected grade level
 )
+
+# Callback function to update the heatmap based on selected grade
 def update_heatmap(selected_grade):
+    # Define mapping of grade levels to corresponding columns
     grade_columns = [col for col in combined_population_df.columns if f'{selected_grade} ' in col and 'Total' in col]
 
+    # Check if there are any columns for the selected grade
     if not grade_columns:
         return px.imshow([[0]], labels=dict(x="Strand", y="Region", color="Students"),
                          title=f"No data available for Grade {selected_grade}")
 
+    # Melt the DataFrame to long format for heatmap
+    # This will create a DataFrame with 'Region', 'Strand', and 'Total Students' columns
     melted_df = combined_population_df.melt(
         id_vars=['Region'],
         value_vars=grade_columns,
         var_name="Strand",
         value_name="Total Students"
     )
+
+    # Extract the strand name from the column names
     melted_df['Strand'] = melted_df['Strand'].str.extract(r'(\b[A-Za-z]+\b)')
+
+    # Group by Region and Strand, summing the total students
     aggregated_df = melted_df.groupby(['Region', 'Strand'], as_index=False).sum()
+
+    # Pivot the DataFrame to create a heatmap format
+    # This will create a DataFrame with regions as rows, strands as columns, and total students as values
     heatmap_data = aggregated_df.pivot(index='Region', columns='Strand', values='Total Students').fillna(0)
 
+    # Sort the DataFrame by Region
     fig = px.imshow(
-        heatmap_data,
-        labels=dict(x="Strand", y="Region", color="Students"),
-        x=heatmap_data.columns,
-        y=heatmap_data.index,
-        color_continuous_scale="viridis",
-        text_auto=True,
-        aspect="auto"
+        heatmap_data, # Create the heatmap
+        labels=dict(x="Strand", y="Region", color="Students"), # Labels for axes and color
+        x=heatmap_data.columns, # X-axis labels (Strands)
+        y=heatmap_data.index, # Y-axis labels (Regions)
+        color_continuous_scale="viridis", # Color scale for the heatmap
+        text_auto=True, # Auto text for values
+        aspect="auto" # Maintain aspect ratio
     )
 
+    # Update layout of the heatmap
     fig.update_layout(
-        title=f"Student Population by Region and Strand (Grade {selected_grade})",
-        xaxis_title="Strand",
-        yaxis_title="Region",
-        autosize=False,
-        width=1000,
-        height=800,
-        margin=dict(l=100, r=50, t=100, b=100),
-        font=dict(size=12)
+        title=f"Student Population by Region and Strand (Grade {selected_grade})", # Title of the heatmap
+        xaxis_title="Strand", # X-axis title
+        yaxis_title="Region", # Y-axis title
+        autosize=False, # Set fixed size for the heatmap
+        width=1000, # Width of the heatmap
+        height=800, # Height of the heatmap
+        margin=dict(l=100, r=50, t=100, b=100), # Margin settings
+        font=dict(size=12) # Font size for the text
     )
-    fig.update_xaxes(tickangle=45)
+    fig.update_xaxes(tickangle=45) # Rotate x-axis labels for better readability
 
     return fig
 
 # Callback for bar chart of total enrollees per grade
 @app.callback(
-    Output('bar-chart', 'figure'),
-    Input('grade-dropdown', 'value')
+    Output('bar-chart', 'figure'), # Bar chart output
+    Input('grade-dropdown', 'value') # Input for the selected grade level (not used in this callback, but included for consistency with the heatmap callback
 )
 def update_bar_chart(selected_grade):
     # Define mapping of grade levels to corresponding columns
@@ -113,23 +130,23 @@ def update_bar_chart(selected_grade):
         total = combined_population_df[columns].sum().sum() if columns else 0
         grade_totals.append(total)
 
+    # Create a bar chart for total enrollees per grade level
     fig = px.bar(
-        x=grade_levels,
-        y=grade_totals,
-        labels={'x': 'Grade Level', 'y': 'Total Enrollees'},
-        title='Total Enrollees per Grade Level',
-        #text=grade_totals,
-        color=grade_levels,
-        height=400,
-        width=600,
-        color_discrete_sequence=px.colors.qualitative.Set2
+        x=grade_levels, # X-axis values (Grade Levels)
+        y=grade_totals, # Y-axis values (Total Enrollees)
+        labels={'x': 'Grade Level', 'y': 'Total Enrollees'}, # Labels for axes
+        title='Total Enrollees per Grade Level', # Title of the bar chart
+        #text=grade_totals, # Text on bars disabled for now for cleanliness
+        color=grade_levels, # Color by grade levels
+        height=400, # Height of the bar chart
+        width=600, # Width of the bar chart
+        color_discrete_sequence=px.colors.qualitative.Set2  # Color sequence for the bars
     )
     fig.update_traces(
-        
-        width=0.9, 
-        marker_color='skyblue')
+        width=0.9, # Bar width
+        marker_color='skyblue') # Bar color
     
-    fig.update_layout(xaxis_tickangle=-45, showlegend=False)
+    fig.update_layout(xaxis_tickangle=-45, showlegend=False) # Rotate x-axis labels for better readability
 
     return fig
 

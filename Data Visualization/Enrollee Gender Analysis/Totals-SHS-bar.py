@@ -43,38 +43,46 @@ app = dash.Dash(__name__, external_stylesheets=[
 app.layout = html.Div([
     html.H2("Senior High School Enrollee Gender Distribution by Strand", className="text-center mt-4"),
     html.Div([
-        dcc.Graph(id='shs-bar-chart')
+        dcc.Graph(id='shs-bar-chart') # Bar chart for SHS enrollee distribution
     ], className="mt-4 px-4")
 ])
 
 # Callback (triggered once on load)
 @app.callback(
-    Output('shs-bar-chart', 'figure'),
-    Input('shs-bar-chart', 'id')  # dummy input
+    Output('shs-bar-chart', 'figure'), # Output for the SHS bar chart
+    Input('shs-bar-chart', 'id') # Dummy input to trigger the callback
 )
+
+# Callback function to update the SHS bar chart
 def display_shs_bar_chart(_):
-    total_all = int(grouped['Enrollees'].sum())
+    total_all = int(grouped['Enrollees'].sum()) # Total enrollees for all regions
+    
+    # formats each bar for chart
     fig = px.bar(
-        grouped,
-        x='Percentage',
-        y='Strand',
-        color='Gender',
-        orientation='h',
-        barmode='stack',
-        text='Label',
-        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
-        title=f"Gender Distribution in SHS (All Regions)<br><sub>Total Enrollees for SHS: {total_all:,}</sub>",
-        labels={'Percentage': 'Percentage of Students'}
+        grouped, # Data for the bar chart
+        x='Percentage', # X-axis: percentage of enrollees
+        y='Strand', # Y-axis: strand
+        color='Gender', # Color by command
+        orientation='h', # Horizontal orientation
+        barmode='stack', # Stacked bar mode
+        text='Label', # Text on bars
+        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'}, # Color mapping
+        title=f"Gender Distribution in SHS (All Regions)<br><sub>Total Enrollees for SHS: {total_all:,}</sub>", # Title
+        labels={'Percentage': 'Percentage of Students'} # Label for x-axis
     )
 
+    # Update layout for entire chart
     fig.update_layout(
-        xaxis=dict(title='Percentage', ticksuffix='%', range=[0, 100]),
-        yaxis_title='Strand',
-        height=700,
-        legend_title='Gender',
-        margin=dict(l=100, r=40, t=80, b=60)
+        xaxis=dict(title='Percentage', # X-axis title
+                   ticksuffix='%', # Suffix for x-axis ticks (can remove for cleanliness)
+                   range=[0, 100]), # Range for x-axis
+        yaxis_title='Strand', # Y-axis title
+        height=700, # Height of the chart
+        legend_title='Gender', # Legend title
+        margin=dict(l=100, r=40, t=80, b=60) # Margin settings
     )
-    fig.update_traces(textposition='inside', insidetextanchor='middle')
+    fig.update_traces(textposition='inside', # Position text inside bars
+                      insidetextanchor='middle') # Position labels inside bars
     return fig
 
 # Run app

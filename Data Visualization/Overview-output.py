@@ -5,7 +5,7 @@ import plotly.express as px
 import json
 import os
 
-# Load the dataset
+# Load the dataset (change later to let user select dataset!!)
 file_path = "CSV Files/CLEANED_SY2023_Enrollment.csv"  # Update this path if necessary
 df = pd.read_csv(file_path)
 
@@ -45,6 +45,7 @@ total_schools = df.shape[0]
 # Count DepEd Managed schools
 deped_managed_schools = df[df['Sector'] == 'Public']['Sector'].count()
 
+# Dictionary for combined levels
 combined_levels = {
     'Kindergarten': [
         'K Male', 'K Female'
@@ -70,13 +71,15 @@ combined_levels = {
     ]
 }
 
+# Calculate total enrollees for each combined level
 combined_totals = {level: df[columns].sum().sum() for level, columns in combined_levels.items()}
 
 # Calculate total enrollees per region
 region_enrollment = df.groupby('Region')[enrollment_columns].sum().sum(axis=1).reset_index()
 region_enrollment.columns = ['Region', 'Total_Enrollees']
 
-# CODE FOR HEATMAP!!
+# CODE FOR HEATMAP!! starts at line 82 and ends in line 128 remove as needed
+# use Overview-heatmap.py for the heatmap code
 
 # Aggregate total per region by level
 region_level_totals = df.groupby('Region').agg({
@@ -141,21 +144,21 @@ app.layout = html.Div([
     
     # Single horizontal bar graph comparing Male vs Female Enrollees
     dcc.Graph(
-        id='male-vs-female-bar',
+        id='male-vs-female-bar', # ID for the graph
         figure=go.Figure(
             data=[
                 go.Bar(
-                    x=[total_male_enrollees, total_female_enrollees],
-                    y=['Male Enrollees', 'Female Enrollees'],
-                    orientation='h',
-                    marker=dict(color=['blue', 'pink'])
+                    x=[total_male_enrollees, total_female_enrollees], # X-axis values (total male/female enrollees)
+                    y=['Male Enrollees', 'Female Enrollees'], # Y-axis labels
+                    orientation='h', # Horizontal orientation
+                    marker=dict(color=['blue', 'pink']) # Color for bars
                 )
             ],
             layout=go.Layout(
                 title="Male vs Female Enrollees",
-                xaxis=dict(title="Number of Enrollees"),
-                yaxis=dict(title=""),
-                height=400
+                xaxis=dict(title="Number of Enrollees"), # X-axis title
+                yaxis=dict(title=""), # Y-axis title
+                height=400 # Height of the graph
             )
         )
     ),
@@ -166,16 +169,16 @@ app.layout = html.Div([
         figure=go.Figure(
             data=[
                 go.Pie(
-                    labels=list(combined_totals.keys()),
-                    values=list(combined_totals.values()),
-                    hole=0.5,
-                    textfont=dict(size=10)
-                    #textinfo='none' 
+                    labels=list(combined_totals.keys()), # Labels for pie chart
+                    values=list(combined_totals.values()), # Values for pie chart
+                    hole=0.5, # Hole size for donut chart
+                    textfont=dict(size=10) # Font size for text
+                    #textinfo='none' # removed for now to show percentage of grade levels
                 )
             ],
             layout=go.Layout(
-                title="Total Enrollees by Level (ELEM, JHS, SHS)",
-                height=400
+                title="Total Enrollees by Level (ELEM, JHS, SHS)", # Title of the pie chart
+                height=400 # Height of the graph
             )
         )
     ),

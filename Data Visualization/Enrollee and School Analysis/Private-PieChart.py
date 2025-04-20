@@ -3,13 +3,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Load the dataset
+# Load the dataset (change later to let user select dataset!!)
 df = pd.read_csv('CSV Files/CLEANED_SY2023_Enrollment.csv')
 
-# Filter for public schools
+# Filter for private schools
 public_schools = df[df['Sector'].isin(['Private', 'PSO'])]  # Changed to 'Private'
 
-# List of columns to sum for total enrollees
+# Dictionary or List of columns to sum for total enrollees
 combined_levels = {
     'Kindergarten': [
         'K Male', 'K Female'
@@ -54,18 +54,23 @@ level_enrollment_df = pd.DataFrame(level_enrollment.items(), columns=['Level', '
 level_enrollment_df['Percentage'] = (level_enrollment_df['Total Enrollment'] / level_enrollment_df['Total Enrollment'].sum()) * 100
 
 # Create the pie chart with spacing between slices and legend
+# Pie chart format!
 plt.figure(figsize=(10, 10))
-wedges, labels, autopct_texts = plt.pie(level_enrollment_df['Percentage'],
-                                        labels=level_enrollment_df['Level'],
-                                        autopct='%1.1f%%',
-                                        startangle=90,
-                                        textprops={'fontsize': 10},
-                                        wedgeprops={'linewidth': 1, 'edgecolor': 'white'})
+wedges, labels, autopct_texts = plt.pie(level_enrollment_df['Percentage'], # Data for the pie chart
+                                        labels=level_enrollment_df['Level'], # Labels for each slice
+                                        autopct='%1.1f%%', # Percentage format
+                                        startangle=90, # Start angle for the pie chart
+                                        textprops={'fontsize': 10}, # Font size for text
+                                        wedgeprops={'linewidth': 1, 'edgecolor': 'white'}) # Wedge properties
 plt.title('Distribution of Private Schools by Enrollees per Grade Levels (Enrollment Percentage)', fontsize=14)
 plt.axis('equal')
 
 # Add a legend to the side
-plt.legend(wedges, level_enrollment_df['Level'], title='Grade Levels', loc='center left', bbox_to_anchor=(1, 0.5))
+plt.legend(wedges, # Legend for the pie chart
+           level_enrollment_df['Level'], # Labels for the legend
+           title='Grade Levels', # Title for the legend
+           loc='center left', # Legend location
+           bbox_to_anchor=(1, 0.5)) # Legend position
 
-plt.tight_layout()
+plt.tight_layout() # Adjust layout to fit everything
 plt.show()
