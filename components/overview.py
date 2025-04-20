@@ -5,6 +5,11 @@ import pandas as pd
 import numpy as np
 import json
 import os
+from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure
+from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure ,get_latest_total_enrollees
+
+
+
 
 # ===== DATA FUNCTIONS =====
 
@@ -117,7 +122,7 @@ def create_info_card(title, content, height=300, width=None, gradient="linear-gr
                 "fontWeight": "bold",
                 "marginBottom": "10px"
             }),
-            html.P(content, style={
+            content if isinstance(content, (html.Div, dcc.Graph)) else html.P(content, style={
                 "fontFamily": 'Montserrat',
                 "fontSize": "12px",
                 "color": "#333"
@@ -241,18 +246,34 @@ def create_overview_content():
     
     card1_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
     card2_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
-    card3_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
+
+    
+    card3_graph = dcc.Graph(
+    figure=get_enrollment_trend_figure(),
+    config={'displayModeBar': False},
+    style={"height": "500px", "width": "800px"}
+)
  
     
     # Create components
     card1 = create_info_card("Title for Data Viz 1", card1_content, height = 300)
     card2 = create_info_card("Title for Data Viz 2", card2_content, height = 500)
     stacked_cards = create_stacked_cards([card1, card2])
-    
-    big_card = create_info_card("Title for Data Viz 3", card3_content, height=820)
+    number= get_latest_total_enrollees()
+    title = html.H3([
+    html.Span(f"{number:,} ", style={
+        
+        "fontSize": "70px",
+        "fontWeight": "bold",
+        "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
+        "WebkitBackgroundClip": "text",  
+        "color": "transparent",  
+    }),
+    "Enrollees"
+    ])
+
+
+    big_card = create_info_card(title, card3_graph, height=820)
     main_section = create_two_column_layout(big_card, stacked_cards)
     
     map_card = create_visualization_card(
