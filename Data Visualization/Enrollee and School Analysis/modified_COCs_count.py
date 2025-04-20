@@ -3,7 +3,7 @@ import dash
 from dash import dcc, html
 import plotly.graph_objects as go
 
-# Load dataset
+# Load the dataset (change later to let user select dataset!!)
 df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 
 # Group data by Region and Modified COC to count the number of schools
@@ -29,42 +29,43 @@ custom_colors = [primary_color] + light_colors[:len(coc_ranking) - 1]
 # Create stacked bar chart manually with go.Figure for more control
 fig = go.Figure()
 
-
+# Add bars for each Modified COC
 for i, coc in enumerate(coc_ranking):
-    data = grouped[grouped['Modified COC'] == coc]
+    data = grouped[grouped['Modified COC'] == coc] # Filter data for the current COC
     fig.add_trace(go.Bar(
-        x=data['Region'],
-        y=data['size'],
-        name=coc,
+        x=data['Region'], # Computes X-axis values
+        y=data['size'], # Computes Y-axis values
+        name=coc, # Name of the bar
         marker=dict(
-            color=custom_colors[i],
-            line=dict(color='gray', width=1)
+            color=custom_colors[i], # Color for the bar
+            line=dict(color='gray', width=1) # Border color
         ),
+        # Text on bars
         hovertemplate='<b>Modified COC:</b> %{customdata[0]}<br><b>Region:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>',
-        customdata=[[coc] for _ in range(len(data))]
+        customdata=[[coc] for _ in range(len(data))] # Custom data for hover
     ))
 
-# Add total annotations
+# This finds total schools per region
 for i, row in total_schools_per_region.iterrows():
     fig.add_annotation(
-        x=row['Region'],
-        y=row['size'],
-        text=str(row['size']),
-        showarrow=False,
-        font=dict(size=12, color="black"),
-        xanchor='center',
-        yanchor='bottom'
+        x=row['Region'], # X-axis value
+        y=row['size'], # Y-axis value
+        text=str(row['size']), # Text to show
+        showarrow=False, # No arrow
+        font=dict(size=12, color="black"), # Font size and color
+        xanchor='center', # Center the text
+        yanchor='bottom' # Anchor the text to the bottom
     )
 
-# Update layout
+# organize the layout of the chart itself with this
 fig.update_layout(
-    title="Number of Schools by Region and Modified COC",
-    xaxis_title='Region',
-    yaxis_title='Number of Schools',
-    height=700,
-    barmode='stack',
-    xaxis=dict(categoryorder='total descending'),
-    legend_title='Modified COC'
+    title="Number of Schools by Region and Modified COC", # Title of the chart
+    xaxis_title='Region', # X-axis title
+    yaxis_title='Number of Schools', # Y-axis title
+    height=700, # Height of the chart
+    barmode='stack', # Stacked bar mode
+    xaxis=dict(categoryorder='total descending'), # Order x-axis by total
+    legend_title='Modified COC' # Legend title
 )
 
 # Create Dash app
@@ -74,17 +75,20 @@ app = dash.Dash(__name__, external_stylesheets=[
 
 # Layout
 app.layout = html.Div([
+    # to edit title of chart!
     html.H2("Number of Schools by Region and Modified COC", className="text-center mt-4"),
 
+    # Stacked bar chart
     html.Div([
-        dcc.Graph(id='stacked-bar-chart', figure=fig)
-    ], className="mt-4 px-4"),
+        dcc.Graph(id='stacked-bar-chart', figure=fig) # Chart itself
+    ], className="mt-4 px-4"), 
 
+    # Ranking of Modified COCs as a list
     html.Div([
-        html.H5("Ranking of Modified COCs (Most Prominent to Least):", className="text-center mt-4"),
+        html.H5("Ranking of Modified COCs (Most Prominent to Least):", className="text-center mt-4"), # Title
         html.Ol(
-            children=[html.Li(coc) for coc in coc_ranking],
-            style={'textAlign': 'center', 'listStylePosition': 'inside'}
+            children=[html.Li(coc) for coc in coc_ranking], # List of COCs
+            style={'textAlign': 'center', 'listStylePosition': 'inside'} # Center the list
         )
     ], className="mt-4 px-4")
 ])

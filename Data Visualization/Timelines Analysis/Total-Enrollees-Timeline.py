@@ -4,10 +4,12 @@ import os
 import re
 import plotly.io as pio
 
+# Automatically reads files from the CSV folder
 def load_and_process_data(directory):
     data = []
     pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
 
+    # Loop through all files in the directory
     for filename in os.listdir(directory):
         match = pattern.match(filename)
         if match:
@@ -23,21 +25,30 @@ def load_and_process_data(directory):
     
     return pd.DataFrame(data)
 
+# Function to plot enrollment trend
 def plot_enrollment_trend(data):
     """
     Plot a line chart for total enrollees by year.
     Args:
         data (pd.DataFrame): DataFrame containing 'Year' and 'Total Enrollees'.
     """
-    data = data.sort_values(by='Year')
+    data = data.sort_values(by='Year') # Sort by year
 
-    fig = px.line(data, x='Year', y='Total Enrollees', title='Total Enrollees by Year',
-                  labels={'Year': 'Year', 'Total Enrollees': 'Total Enrollees'},
-                  markers=True)
-    fig.update_traces(line=dict(color='blue', width=2), marker=dict(size=8))
-    fig.update_layout(title_x=0.5)
+    # Ensure the 'Year' column is numeric
+    fig = px.line(data, 
+                  x='Year', # X-axis values
+                  y='Total Enrollees', # Y-axis values
+                  title='Total Enrollees by Year', # Chart title
+                  labels={'Year': 'Year', # X-axis label
+                          'Total Enrollees': 'Total Enrollees'}, # Y-axis label
+                  markers=True) # Show markers on the line
+    # Set the template for the chart
+    fig.update_traces(line=dict(color='blue', # Line color
+                                width=2), # Line width
+                      marker=dict(size=8))  # Marker size
+    fig.update_layout(title_x=0.5) # Center the title
     
-    fig.update_xaxes(dtick=1, tickformat='.0f')
+    fig.update_xaxes(dtick=1, tickformat='.0f') # Set x-axis ticks to 1 year and format
     fig.show()
 
 # Set the folder containing the cleaned enrollment files

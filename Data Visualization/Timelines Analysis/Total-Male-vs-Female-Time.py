@@ -3,6 +3,7 @@ import plotly.express as px
 import os
 import re
 
+# Automatically reads cleaned file
 def load_and_process_data(directory):
     data = []
     pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
@@ -29,6 +30,7 @@ def load_and_process_data(directory):
 
     return pd.DataFrame(data)
 
+# Function to plot enrollment trends
 def plot_enrollment_trend_by_gender(data):
     data = data.sort_values(by='Year')
 
@@ -36,13 +38,17 @@ def plot_enrollment_trend_by_gender(data):
     melted = data.melt(id_vars='Year', value_vars=['Total Male Enrollees', 'Total Female Enrollees'],
                        var_name='Gender', value_name='Total Enrollees')
 
-    fig = px.line(melted, x='Year', y='Total Enrollees', color='Gender',
-                  title='Total Male vs Female Enrollees by Year',
-                  markers=True)
+    fig = px.line(melted, 
+                  x='Year', # X-axis values
+                  y='Total Enrollees', # Y-axis values
+                  color='Gender', # Color by command
+                  title='Total Male vs Female Enrollees by Year', # Chart title
+                  markers=True) # Show markers on the line
 
-    fig.update_traces(line=dict(width=2), marker=dict(size=8))
-    fig.update_layout(title_x=0.5)
-    fig.update_xaxes(dtick=1, tickformat='.0f')
+    fig.update_traces(line=dict(width=2), # Line width
+                      marker=dict(size=8)) # Marker size
+    fig.update_layout(title_x=0.5) # Center the title
+    fig.update_xaxes(dtick=1, tickformat='.0f') # Set x-axis ticks to 1 year and format
     fig.show()
 
 # Set the folder containing the cleaned enrollment files

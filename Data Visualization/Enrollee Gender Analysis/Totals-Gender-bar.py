@@ -7,8 +7,11 @@ import plotly.express as px
 df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 
 # Melt the DataFrame
+# This will convert the DataFrame from wide format to long format
+# Each row will represent a single enrollment count for a specific descriptor and region
 melted_df = df.melt(id_vars=["Region"], var_name="Descriptor", value_name="Enrollees")
 
+# Grade Level Dictionary
 combined_levels = {
     'K': ['K Male', 'K Female'],
     'ELEM': [
@@ -33,6 +36,7 @@ combined_levels = {
 }
 
 # Invert the combined_levels dict
+# This will create a mapping from descriptor to category
 descriptor_to_category = {
     descriptor: category
     for category, descriptors in combined_levels.items()
@@ -64,55 +68,55 @@ app = dash.Dash(__name__, external_stylesheets=[
 
 # Layout
 app.layout = html.Div([
-    html.H2("Total Male and Female Enrollees by Category", className="text-center mt-4"),
+    html.H2("Total Male and Female Enrollees by Category", className="text-center mt-4"), # Title
     html.Div([
-        dcc.Graph(id='stacked-bar-chart')
+        dcc.Graph(id='stacked-bar-chart') # Stacked bar chart
     ], className="mt-4 px-4")
 ])
 
 # Callback
 @app.callback(
-    Output('stacked-bar-chart', 'figure'),
+    Output('stacked-bar-chart', 'figure'), # Output for the stacked bar chart
     Input('stacked-bar-chart', 'id')  # Dummy input to trigger the callback
 )
 def update_stacked_bar_chart(_):
     # Calculate percentage and label
-    total_per_category = grouped.groupby('Category')['Enrollees'].transform('sum')
-    grouped['Percentage'] = (grouped['Enrollees'] / total_per_category) * 100
-    grouped['Label'] = grouped.apply(
-        lambda row: f"{int(row['Enrollees']):,} ({row['Percentage']:.1f}%)", axis=1
+    total_per_category = grouped.groupby('Category')['Enrollees'].transform('sum') # Total enrollees per category
+    grouped['Percentage'] = (grouped['Enrollees'] / total_per_category) * 100 # Percentage of enrollees
+    grouped['Label'] = grouped.apply( # Create label for each bar
+        lambda row: f"{int(row['Enrollees']):,} ({row['Percentage']:.1f}%)", axis=1 # Format label
     )
 
     # Create stacked bar chart
     fig = px.bar(
-        grouped,
-        x='Percentage',
-        y='Category',
-        color='Gender',
-        barmode='stack',
-        orientation='h',
-        text='Label',
-        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
-        title="Gender Distribution by Category (K, ELEM, JHS, SHS)"
+        grouped, # Data for the bar chart
+        x='Percentage', # X-axis: percentage of enrollees
+        y='Category', # Y-axis: category (K, ELEM, JHS, SHS)
+        color='Gender', # Color by command
+        barmode='stack', # Stacked bar mode
+        orientation='h', # Horizontal orientation
+        text='Label', # Text on bars
+        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'}, # Color mapping
+        title="Gender Distribution by Category (K, ELEM, JHS, SHS)" # Title of the chart
     )
 
-    total_all = int(grouped['Enrollees'].sum())
+    total_all = int(grouped['Enrollees'].sum()) # Total enrollees across all categories
     fig.update_layout(
         title={
-            'text': f"Gender Distribution by Category (K, ELEM, JHS, SHS)<br><sub>Total Enrollees: {total_all:,}</sub>",
-            'x': 0.5
+            'text': f"Gender Distribution by Category (K, ELEM, JHS, SHS)<br><sub>Total Enrollees: {total_all:,}</sub>", # Title with total enrollees
+            'x': 0.5 # Center the title
         },
-        xaxis=dict(
-            title='Percentage',
-            ticksuffix='%',
-            range=[0, 100]
+        xaxis=dict( 
+            title='Percentage', # X-axis title
+            ticksuffix='%', # Suffix for ticks (can remove for cleanliness)
+            range=[0, 100] # Range for X-axis
         ),
-        yaxis_title='Category',
-        height=600,
-        legend_title='Gender',
-        margin=dict(l=100, r=40, t=80, b=60)
+        yaxis_title='Category', # Y-axis title
+        height=600, # Height of the chart
+        legend_title='Gender', # Legend title
+        margin=dict(l=100, r=40, t=80, b=60) # Margin settings
     )
-    fig.update_traces(textposition='inside', insidetextanchor='middle')
+    fig.update_traces(textposition='inside', insidetextanchor='middle') # Position labels inside bars
 
     return fig
 

@@ -4,7 +4,8 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 
-# Load the dataset
+# based on figma dont add yet
+# Load the dataset (change later to let user select dataset!!)
 df = pd.read_csv('CSV Files/CLEANED_SY2023_Enrollment.csv')  # Adjust path as needed
 
 # Grade levels and corresponding columns
@@ -34,20 +35,23 @@ app.layout = html.Div([
     html.Div([
         dcc.Dropdown(
             id='grade-dropdown',
-            options=[{'label': level, 'value': level} for level in grade_levels.keys()],
-            value='Grade 1',
-            clearable=False,
-            className='mb-4'
+            options=[{'label': level, 
+                      'value': level} for level in grade_levels.keys()],
+            value='Grade 1', # Default value
+            clearable=False, # Dropdown cannot be cleared
+            className='mb-4' # Bootstrap class for margin
         ),
-    ], className="container"),
+    ], className="container"), # Bootstrap class for centering
 
-    dcc.Graph(id='bar-chart')
+    dcc.Graph(id='bar-chart') # Bar chart for total enrollees
 ])
 
 @app.callback(
     Output('bar-chart', 'figure'),
     Input('grade-dropdown', 'value')
 )
+
+# Callback function to update the bar chart based on selected grade
 def update_bar_chart(selected_grade):
     male_col, female_col = grade_levels[selected_grade]
     df_grouped = df.groupby('Region')[[male_col, female_col]].sum()
@@ -67,22 +71,23 @@ def update_bar_chart(selected_grade):
         df_grouped.reset_index(),
         x='Region',
         y='Total',
-        color='Color',
-        color_discrete_map={'Top Region': '#f08080', 'Other': '#a8ddb5'},
-        text='Total'
+        color='Color', # Color by Top Region or Other
+        color_discrete_map={'Top Region': '#f08080', 'Other': '#a8ddb5'}, # Adjust colors as needed
+        text='Total' # Display total enrollees on bars
     )
 
-    fig.update_traces(texttemplate='%{text:,}', textposition='outside')
+    fig.update_traces(texttemplate='%{text:,}', # Format text with commas
+                      textposition='outside') # Position text outside the bar
     fig.update_layout(
         title=f"Total Enrollees in {selected_grade} per Region (Descending Order)",
         xaxis_title="Regions",
         yaxis_title="Total Enrollees",
-        xaxis_tickangle=-45,
-        plot_bgcolor='#f4f4f4',
-        yaxis=dict(showgrid=True, gridcolor='#cccccc'),
-        font=dict(color='#333333'),
-        legend_title=None,
-        margin=dict(t=80, b=80)
+        xaxis_tickangle=-45, # Rotate x-axis labels for better readability
+        plot_bgcolor='#f4f4f4', # Background color
+        yaxis=dict(showgrid=True, gridcolor='#cccccc'), # Grid lines
+        font=dict(color='#333333'), # Font color
+        legend_title=None, # Legend title
+        margin=dict(t=80, b=80) # Margin settings
     )
 
     return fig

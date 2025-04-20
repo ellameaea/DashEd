@@ -3,6 +3,8 @@ import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
 
+# based on figma dont use nalang
+
 # Load dataset
 df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 
