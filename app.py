@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 from components.header import create_header
 from components.tabs import create_tabs
-from callbacks import register_callbacks  # <== import your callback function
+from callbacks import register_callbacks
 
 # Initialize the app
 app = dash.Dash(

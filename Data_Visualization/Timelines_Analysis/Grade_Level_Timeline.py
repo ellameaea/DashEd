@@ -80,6 +80,8 @@ def plot_enrollment_by_level(data):
     fig.update_layout(title_x=0.5) # Center the title
     fig.update_xaxes(dtick=1, # Set x-axis ticks to 1 year
                      tickformat='.0f') # makes sure no decimals for each year
+    
+    return fig
 
 # Folder containing the cleaned CSV files
 csv_folder = 'CSV Files'
