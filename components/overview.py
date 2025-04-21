@@ -5,105 +5,106 @@ import pandas as pd
 import numpy as np
 import json
 import os
+from Data_Visualization.Overview_output import pie_chart_total_enrollees
+from Data_Visualization.phmap import phmap
 
 # ===== DATA FUNCTIONS =====
 
-def get_philippines_map_data():
+# def get_philippines_map_data():
+#     current_directory = os.getcwd()
+#     cleaned_file = os.path.join(current_directory, 'CSV Files/CLEANED_SY2023_Enrollment.csv')
+#     json_file = os.path.join(current_directory, 'ph.json')
 
-    current_directory = os.getcwd()
-    cleaned_file = os.path.join(current_directory, 'CSV Files/CLEANED_SY2023_Enrollment.csv')
-    json_file = os.path.join(current_directory, 'ph.json')
+#     df = pd.read_csv(cleaned_file)
+#     with open(json_file) as f:
+#         ph_geojson = json.load(f)
 
-    df = pd.read_csv(cleaned_file)
-    with open(json_file) as f:
-        ph_geojson = json.load(f)
+#     female_cols = [col for col in df.columns if 'Female' in col]
+#     male_cols = [col for col in df.columns if 'Male' in col]
 
-    female_cols = [col for col in df.columns if 'Female' in col]
-    male_cols = [col for col in df.columns if 'Male' in col]
+#     region_gender = df.groupby('Region')[female_cols + male_cols].sum()
+#     region_gender['Disparity'] = abs(region_gender[female_cols].sum(axis=1) - region_gender[male_cols].sum(axis=1))
 
-    region_gender = df.groupby('Region')[female_cols + male_cols].sum()
-    region_gender['Disparity'] = abs(region_gender[female_cols].sum(axis=1) - region_gender[male_cols].sum(axis=1))
+#     region_gender = region_gender[['Disparity']].reset_index()
 
-    region_gender = region_gender[['Disparity']].reset_index()
+#     region_mapping = {
+#         'Region I': 'Ilocos',
+#         'Region II': 'Cagayan Valley',
+#         'Region III': 'Central Luzon',
+#         'Region IV-A': 'Calabarzon',
+#         'MIMAROPA': 'Mimaropa',
+#         'Region V': 'Bicol',
+#         'Region VI': 'Western Visayas',
+#         'Region VII': 'Central Visayas',
+#         'Region VIII': 'Eastern Visayas',
+#         'Region IX': 'Zamboanga Peninsula',
+#         'Region X': 'Northern Mindanao',
+#         'Region XI': 'Davao',
+#         'Region XII': 'Soccsksargen',
+#         'NCR': 'National Capital Region',
+#         'CAR': 'Cordillera Administrative Region',
+#         'BARMM': 'Autonomous Region in Muslim Mindanao',
+#         'CARAGA': 'Caraga'
+#     }
 
-    region_mapping = {
-        'Region I': 'Ilocos',
-        'Region II': 'Cagayan Valley',
-        'Region III': 'Central Luzon',
-        'Region IV-A': 'Calabarzon',
-        'MIMAROPA': 'Mimaropa',
-        'Region V': 'Bicol',
-        'Region VI': 'Western Visayas',
-        'Region VII': 'Central Visayas',
-        'Region VIII': 'Eastern Visayas',
-        'Region IX': 'Zamboanga Peninsula',
-        'Region X': 'Northern Mindanao',
-        'Region XI': 'Davao',
-        'Region XII': 'Soccsksargen',
-        'NCR': 'National Capital Region',
-        'CAR': 'Cordillera Administrative Region',
-        'BARMM': 'Autonomous Region in Muslim Mindanao',
-        'CARAGA': 'Caraga'
-    }
+#     region_gender['id'] = region_gender['Region'].map(region_mapping)
 
-    region_gender['id'] = region_gender['Region'].map(region_mapping)
+#     fig = px.choropleth_mapbox(
+#         region_gender,
+#         geojson=ph_geojson,
+#         locations='id',
+#         color='Disparity',
+#         featureidkey='properties.name',
+#         center={'lat': 12.8797, 'lon': 121.7740},
+#         mapbox_style='carto-positron',
+#         zoom=5,
+#         color_continuous_scale='Plasma',
+#         labels={'Disparity': 'Gender Disparity'},
+#         hover_data={'Region': True, 'Disparity': True}
+#     )
 
-    fig = px.choropleth_mapbox(
-        region_gender,
-        geojson=ph_geojson,
-        locations='id',
-        color='Disparity',
-        featureidkey='properties.name',
-        center={'lat': 12.8797, 'lon': 121.7740},
-        mapbox_style='carto-positron',
-        zoom=5,
-        color_continuous_scale='Plasma',
-        labels={'Disparity': 'Gender Disparity'},
-        hover_data={'Region': True, 'Disparity': True}
-    )
-
-    fig.update_traces(
-        hovertemplate="<b>%{location}</b><br>" +
-                      "Gender Disparity: %{z}<extra></extra>"
-    )
+#     fig.update_traces(
+#         hovertemplate="<b>%{location}</b><br>" +
+#                       "Gender Disparity: %{z}<extra></extra>"
+#     )
     
-    fig.update_layout(margin={'r':0,'t':0,'l':0,'b':0})
-    return fig
+#     fig.update_layout(margin={'r':0,'t':0,'l':0,'b':0})
+#     return fig
 
 
-def create_philippines_map(data, color_scale=None, height=350):
-    """Create a reusable Philippines map visualization"""
-    if color_scale is None:
-        color_scale = ['yellow', 'pink', 'purple']
+# def create_philippines_map(data, color_scale=None, height=350):
+#     """Create a reusable Philippines map visualization"""
+#     if color_scale is None:
+#         color_scale = ['yellow', 'pink', 'purple']
         
-    # In a real implementation, you would use px.choropleth with appropriate GeoJSON
-    fig = px.choropleth(
-        data,
-        locations='region',
-        color='value',
-        color_continuous_scale=color_scale,
-        scope="asia",
-        labels={'value': 'Value'},
-    )
+#     # In a real implementation, you would use px.choropleth with appropriate GeoJSON
+#     fig = px.choropleth(
+#         data,
+#         locations='region',
+#         color='value',
+#         color_continuous_scale=color_scale,
+#         scope="asia",
+#         labels={'value': 'Value'},
+#     )
     
-    fig.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
-        geo=dict(
-            showcoastlines=True,
-            coastlinecolor="White",
-            showland=True,
-            landcolor="lightgrey",
-            showocean=True,
-            oceancolor="lightgrey",
-            showlakes=False,
-            showcountries=False,
-            projection_scale=7,
-            center=dict(lat=12.8797, lon=121.7740),  # Center on Philippines
-        ),
-        height=height,
-    )
+#     fig.update_layout(
+#         margin=dict(l=0, r=0, t=0, b=0),
+#         geo=dict(
+#             showcoastlines=True,
+#             coastlinecolor="White",
+#             showland=True,
+#             landcolor="lightgrey",
+#             showocean=True,
+#             oceancolor="lightgrey",
+#             showlakes=False,
+#             showcountries=False,
+#             projection_scale=7,
+#             center=dict(lat=12.8797, lon=121.7740),  # Center on Philippines
+#         ),
+#         height=height,
+#     )
     
-    return fig
+#     return fig
 
 def create_info_card(title, content, height=300, width=None, gradient="linear-gradient(133deg, rgba(249, 249, 249, 0.13) 0%, rgba(8, 70, 131, 1) 70%,rgba(222, 8, 44, 1) 80%"):
     """Create reusable info card with gradient border"""
@@ -226,21 +227,11 @@ def create_stacked_cards(cards_list):
         }
     )
 
+
 # ===== MAIN LAYOUT FUNCTION =====
 def create_overview_content():
     """Create the main dashboard content using reusable components"""
-    # Get data
-    map_data = get_philippines_map_data()
-    
-    # Create charts
-    map_chart = dcc.Graph(
-        figure=map_data,
-        config={'displayModeBar': False},
-        style={"height": "800px",'width':'200',"padding":"0","margin":"0"}
-    )
-    
-    card1_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
-    card2_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
+    Total_male_vs_female_enrollees_content = ("3 Visualization")
     card3_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. " +
@@ -248,24 +239,24 @@ def create_overview_content():
  
     
     # Create components
-    card1 = create_info_card("Title for Data Viz 1", card1_content, height = 300)
-    card2 = create_info_card("Title for Data Viz 2", card2_content, height = 500)
-    stacked_cards = create_stacked_cards([card1, card2])
+    Pie_chart_total_enrollees = create_info_card("Total Enrollees by Level", pie_chart_total_enrollees, height = 450)
+    Enrollment_sex_distribution = create_info_card("Enrollment Sex Distribution", Total_male_vs_female_enrollees_content, height = 500)
+    stacked_visualization = create_stacked_cards([Pie_chart_total_enrollees, Enrollment_sex_distribution])
     
     big_card = create_info_card("Title for Data Viz 3", card3_content, height=820)
-    main_section = create_two_column_layout(big_card, stacked_cards)
+    main_section = create_two_column_layout(big_card, stacked_visualization)
     
-    map_card = create_visualization_card(
-        "Regional Gender Disparity in Enrollment",
-        map_chart,
-        "This heatmap highlights gender enrollment disparities per region across the Philippines.",
-        height=890
+    phmap_section = create_visualization_card(
+        "Regional Total Enrollment",
+        dcc.Graph(figure=phmap()),
+        "This heatmap highlights the total enrollment of students per region across the Philippines.",
+        height=880
     )
     
     # Combine all components
     return html.Div([
         main_section,
-        map_card
-    ], style={"max-width": "1400px", "margin": "0 auto", "padding": "20px"})
+        phmap_section
+    ], style={"max-width": "1400px", "margin": "0 auto", "padding": "10px"})
 
 
