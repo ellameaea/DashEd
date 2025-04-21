@@ -159,6 +159,17 @@ app.layout = html.Div([
             )
         )
     ),
+
+html.Div([
+    dcc.Dropdown(
+        id='region-dropdown',
+        options=[{'label': 'All', 'value': 'All'}] + 
+                [{'label': region, 'value': region} for region in region_heatmap_data['Region'].unique() if region != 'Grand Total'],
+        value='All',
+        placeholder="Select a Region",
+        style={'width': '300px', 'margin': 'auto'}
+    )
+], style={'textAlign': 'center', 'paddingBottom': '20px'}),
     
     # Pie chart for total enrollees by combined levels
     dcc.Graph(
@@ -180,11 +191,10 @@ app.layout = html.Div([
         )
     ),
 
-    dcc.Graph(
-        id='region-level-heatmap',
-        figure=heatmap_fig
-    )
-
+dcc.Graph(
+    id='region-level-heatmap',
+    figure=heatmap_fig
+)
 ])
 
 # Run the Dash app

@@ -127,7 +127,7 @@ def create_info_card(title, content, height=300, width=None, gradient="linear-gr
                 "marginBottom": "10px"
             }),
             content if isinstance(content, (html.Div, dcc.Graph)) else html.P(content, style={
-                "fontFamily": 'Montserrat',
+                "fontFamily": 'Revue',
                 "fontSize": "12px",
                 "color": "#333"
             })

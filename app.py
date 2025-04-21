@@ -14,6 +14,8 @@ app = dash.Dash(
     assets_folder='assets'
 )
 
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
+
 # Layout
 app.layout = html.Div(
     children=[
@@ -38,5 +40,8 @@ def update_region_heatmap_figure(selected_level):
     return get_region_heatmap_figure(selected_level)
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
