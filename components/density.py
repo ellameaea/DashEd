@@ -40,7 +40,7 @@ def create_density_content():
         "max-width": "1400px", 
         "margin": "0 auto", 
         "padding": "20px", 
-        "display": "flex",  # Add flex display here
-        "flexDirection": "column",  # Ensure vertical layout
+        "display": "flex", 
+        "flexDirection": "column",  
         "boxSizing": "border-box"
     })
