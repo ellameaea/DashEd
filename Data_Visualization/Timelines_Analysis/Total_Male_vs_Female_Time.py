@@ -63,11 +63,11 @@ def plot_enrollment_trend_by_gender(data):
         title_x=0.5,
         plot_bgcolor='white',
         paper_bgcolor='white',
-        font=dict(family='Montserrat', size=14, color='#333'),
+        font=dict(family='Monserrat', size=14, color='#333'),
         legend=dict(
             orientation='h',
             yanchor='bottom',
-            y=-0.3,
+            y=-0.5,
             xanchor='center',
             x=0.5,
             font=dict(size=12)

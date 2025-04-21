@@ -4,9 +4,10 @@ from dash import dcc, html, Input, Output
 import plotly.express as px
 
 
-def gender_bar():
+def gender_bar(df = None):
     # Load dataset
-    df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
+    if df is None:
+            df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 
     # Melt the DataFrame
     # This will convert the DataFrame from wide format to long format

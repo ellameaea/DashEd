@@ -9,7 +9,8 @@ from callbacks import register_callbacks
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
-    assets_folder='assets'
+    assets_folder='assets',
+    suppress_callback_exceptions=True    # ← add this
 )
 
 # Layout
