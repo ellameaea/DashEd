@@ -5,8 +5,12 @@ import pandas as pd
 import numpy as np
 import json
 import os
+import sys
 from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure
 from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure ,get_latest_total_enrollees
+from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
+
+
 
 
 
@@ -248,19 +252,16 @@ def create_overview_content():
     card2_content = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.")
 
     
-    card3_graph = dcc.Graph(
-    figure=get_enrollment_trend_figure(),
-    config={'displayModeBar': False},
-    style={"height": "500px", "width": "800px"}
-)
- 
+
     
     # Create components
     card1 = create_info_card("Title for Data Viz 1", card1_content, height = 300)
     card2 = create_info_card("Title for Data Viz 2", card2_content, height = 500)
     stacked_cards = create_stacked_cards([card1, card2])
+    
+    
     number= get_latest_total_enrollees()
-    title = html.H3([
+    card3_title = html.H3([
     html.Span(f"{number:,} ", style={
         
         "fontSize": "70px",
@@ -272,8 +273,38 @@ def create_overview_content():
     "Enrollees"
     ])
 
+    card3_content = html.Div([
+        # Trend Graph (Existing)
+        dcc.Graph(
+            figure=get_enrollment_trend_figure(),
+            config={'displayModeBar': False},
+            style={"height": "500px", "width": "800px"}
+        ),
+        # Dropdown to select education level for heatmap
+        dcc.Dropdown(
+            id='level-dropdown',  # Dropdown to select education level
+            options=[
+                {'label': 'All', 'value': 'All'},
+                {'label': 'Kindergarten', 'value': 'Kindergarten'},
+                {'label': 'ELEM', 'value': 'ELEM'},
+                {'label': 'JHS', 'value': 'JHS'},
+                {'label': 'SHS', 'value': 'SHS'},
+                {'label': 'Subtotal', 'value': 'Subtotal'}
+            ],
+            value='All',
+            clearable=False,
+            style={'width': '300px', 'marginBottom': '20px'}
+        ),
+        # Heatmap (New addition)
+        dcc.Graph(
+            id='region-level-heatmap',
+            figure=get_region_heatmap_figure(selected_level='All'),  # Placeholder for heatmap
+            config={'displayModeBar': False},
+            style={"height": "500px", "width": "800px"}
+        )
+    ], style={'marginTop': '20px'})
 
-    big_card = create_info_card(title, card3_graph, height=820)
+    big_card = create_info_card(card3_title, card3_content, height=1600)
     main_section = create_two_column_layout(big_card, stacked_cards)
     
     map_card = create_visualization_card(
@@ -288,5 +319,3 @@ def create_overview_content():
         main_section,
         map_card
     ], style={"max-width": "1400px", "margin": "0 auto", "padding": "20px"})
-
-
