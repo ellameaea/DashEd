@@ -108,9 +108,9 @@ def get_region_heatmap_figure(selected_level='All'):
     fig.update_layout(
         title=f"Enrollment Heatmap by Region - {selected_level if selected_level != 'All' else 'All Levels'}",
         title_font=dict(
-            family="Revue",  # Change to any font you like, e.g., 'Times New Roman', 'Courier New'
+            family="Google Sans, sans-serif",  # Change to any font you like, e.g., 'Times New Roman', 'Courier New'
             size=24,          # Size of the title font
-            color="black"     # Color of the title font
+            color="#DE082C"     # Color of the title font
         ),
         xaxis=dict(title="Education Level", side="top"),
         yaxis_title="Region",

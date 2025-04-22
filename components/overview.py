@@ -270,8 +270,15 @@ def create_overview_content():
         "WebkitBackgroundClip": "text",  
         "color": "transparent",  
     }),
-    "Enrollees"
-    ])
+    html.Span("Enrollees", style={
+        "fontSize": "30px",           # Smaller size for "Enrollees"
+        "fontWeight": "normal",        # Regular weight
+        "color": "#084683",            # Dark gray color
+        "marginLeft": "10px",          # Small spacing from the number
+        "fontFamily": "Google Sans, sans--serif",  # Font style
+    })
+])
+    
 
     card3_content = html.Div([
         # Trend Graph (Existing)
