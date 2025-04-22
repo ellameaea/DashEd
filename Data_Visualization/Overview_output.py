@@ -135,6 +135,50 @@ print(f"Total Female Enrollees: {int(total_female_enrollees):,}")
 print(f"Total Number of Schools: {total_schools:,}")
 print(f"Number of DepEd Managed Schools: {deped_managed_schools:,}")
 
+
+pie_chart_total_enrollees = dcc.Graph(
+    id='combined-levels-pie',
+    figure=go.Figure(
+        data=[
+            go.Pie(
+                labels=list(combined_totals.keys()),
+                values=list(combined_totals.values()),
+                hole=0.55,
+                textinfo='label+percent',  # Show label and percent inside
+                insidetextorientation='radial',
+                textfont=dict(size=12, color='white'),
+                marker=dict(
+                    colors=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],  # Stylish color palette
+                    line=dict(color='white', width=2)  # White borders between slices
+                )
+            )
+        ],
+        layout=go.Layout(
+            title=dict(
+                font=dict(
+                    family="Segoe UI, sans-serif",
+                    size=20,
+                    color="#333333"
+                ),
+                x=0.5,  # Center the title
+                xanchor='center'
+            ),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.1,
+                xanchor="center",
+                x=0.5,
+                font=dict(size=12)
+            ),
+            height=400,
+            margin=dict(t=60, b=40, l=30, r=30)
+        )
+    ),
+)
+    
+
+
 # Create the Dash app
 app = Dash(__name__)
 
@@ -162,27 +206,9 @@ app.layout = html.Div([
             )
         )
     ),
-    
     # Pie chart for total enrollees by combined levels
-    dcc.Graph(
-        id='combined-levels-pie',
-        figure=go.Figure(
-            data=[
-                go.Pie(
-                    labels=list(combined_totals.keys()), # Labels for pie chart
-                    values=list(combined_totals.values()), # Values for pie chart
-                    hole=0.5, # Hole size for donut chart
-                    textfont=dict(size=10) # Font size for text
-                    #textinfo='none' # removed for now to show percentage of grade levels
-                )
-            ],
-            layout=go.Layout(
-                title="Total Enrollees by Level (ELEM, JHS, SHS)", # Title of the pie chart
-                height=400 # Height of the graph
-            )
-        )
-    ),
-
+    pie_chart_total_enrollees,
+    
     dcc.Graph(
         id='region-level-heatmap',
         figure=heatmap_fig
