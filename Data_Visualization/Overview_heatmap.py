@@ -32,6 +32,7 @@ def get_region_heatmap_figure(selected_level='All'):
         ]
     }
 
+    # Sum up enrollment data
     enrollment_columns = [col for cols in combined_levels.values() for col in cols]
     region_level_totals = df.groupby('Region').agg({col: 'sum' for col in enrollment_columns}).reset_index()
 
@@ -43,12 +44,14 @@ def get_region_heatmap_figure(selected_level='All'):
 
     region_heatmap_data['Subtotal'] = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS']].sum(axis=1)
 
+    # Add Grand Total row
     grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']].sum()
     grand_total_row = pd.DataFrame([['Grand Total'] + grand_totals.tolist()], columns=region_heatmap_data.columns)
 
     region_heatmap_data = pd.concat([region_heatmap_data, grand_total_row], ignore_index=True)
     region_heatmap_data = region_heatmap_data.iloc[::-1].reset_index(drop=True)
 
+    # Select the data for display
     if selected_level == 'All':
         display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']]
         x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']
@@ -57,50 +60,20 @@ def get_region_heatmap_figure(selected_level='All'):
         x_axis = [selected_level]
 
     y_axis = display_data.index.tolist()
-
-    # Exclude Grand Total for min/max logic
-    filtered = display_data.drop(index='Grand Total', errors='ignore')
-
-    # Determine min/max rows
-    max_idx = filtered[selected_level].idxmax() if selected_level != 'All' else filtered['Subtotal'].idxmax()
-    min_idx = filtered[selected_level].idxmin() if selected_level != 'All' else filtered['Subtotal'].idxmin()
-
     z = display_data.values
 
-    # Create mask for color mapping
-    colors = np.full_like(z, fill_value=0, dtype=int)  # Default = Normal (0)
+    # Use a blue colorscale
+    custom_colorscale = 'Blues'
 
-    for i, region in enumerate(y_axis):
-        for j, level in enumerate(x_axis):
-            if region == max_idx:
-                colors[i][j] = 1  # Max
-            elif region == min_idx:
-                colors[i][j] = -1  # Min
-            elif region == 'Grand Total':
-                colors[i][j] = 2  # Grand Total
-
-    # Normalize to [0, 1] for Plotly
-    value_map = {-1: 0.0, 0: 0.33, 1: 0.66, 2: 1.0}
-    normalized_colors = np.vectorize(value_map.get)(colors)
-
-    # Custom colorscale
-    custom_colorscale = [
-        [0.0, '#DE082C'],    # Min - red
-        [0.33, '#F0F8FF'],   # Normal - light gray
-        [0.66, '#F2EC1A'],   # Max - green
-        [1.0, '#084683']     # Grand Total - blue
-    ]
-
+    # Create the heatmap
     fig = go.Figure(data=go.Heatmap(
-        z=normalized_colors,
+        z=z,
         x=x_axis,
         y=y_axis,
         text=z,
         texttemplate="%{text}",
         colorscale=custom_colorscale,
-        zmin=0,
-        zmax=1,
-        showscale=False,
+        colorbar=dict(title='Enrollment'),  # Shows color bar on the side
         xgap=1,  # Horizontal grid space
         ygap=1   # Vertical grid space
     ))
@@ -108,9 +81,9 @@ def get_region_heatmap_figure(selected_level='All'):
     fig.update_layout(
         title=f"Enrollment Heatmap by Region - {selected_level if selected_level != 'All' else 'All Levels'}",
         title_font=dict(
-            family="Google Sans, sans-serif",  # Change to any font you like, e.g., 'Times New Roman', 'Courier New'
-            size=24,          # Size of the title font
-            color="#DE082C"     # Color of the title font
+            family="Google Sans, sans-serif",
+            size=24,
+            color="#DE082C"
         ),
         xaxis=dict(title="Education Level", side="top"),
         yaxis_title="Region",
@@ -120,6 +93,5 @@ def get_region_heatmap_figure(selected_level='All'):
         margin=dict(l=100, r=50, t=100, b=100),
         font=dict(size=10)
     )
-
 
     return fig
