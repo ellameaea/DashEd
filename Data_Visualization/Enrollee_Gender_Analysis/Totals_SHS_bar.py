@@ -57,7 +57,7 @@ def gender_shs_bar(df=None):
         yaxis_title='Strand',
         height=400,
         legend_title='Gender',
-        margin=dict(l=20, r=20, t=60, b=20)
+        margin=dict(l=20, r=20, t=60, b=100)
     )
     fig.update_traces(textposition='inside', insidetextanchor='middle')
 
