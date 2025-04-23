@@ -41,8 +41,12 @@ def create_visualization_card(title, chart_component, description=None,
                               gradient="linear-gradient(133deg, rgba(249,249,249,0.13) 0%, rgba(8,70,131,1) 70%, rgba(222,8,44,1) 80%)"):
     children = [
         html.H3(title, style={
-            "fontFamily":"Revue","color":"#2D71B8",
-            "fontSize":"16px","fontWeight":"bold","marginBottom":"10px"
+            "fontFamily": "Google Sans, sans-serif",
+            "color": "#DE082C",
+            "fontSize": "24px",
+            "marginBottom": "10px",
+            "fontWeight": "Normal",
+            "marginTop": "0px" 
         })
     ]
     if description:
@@ -71,9 +75,13 @@ def create_two_column_layout(left_component, right_component):
             "display":"flex","flexDirection":"column"
         }),
         html.Div([right_component], style={
-            "flex":"1 1 35%","minWidth":"250px",
-            "display":"flex","flexDirection":"column"
+            "flex":"1 1 35%",
+            "minWidth":"250px",
+            "display":"flex",
+            "flexDirection":"column",
+            "minHeight": "1500px"  # Optional but enforces vertical symmetry
         })
+
     ], style={
         "display":"flex","flexWrap":"wrap",
         "justifyContent":"space-between","alignItems":"stretch",
@@ -88,11 +96,10 @@ def create_stacked_cards(cards_list):
 
 # ——— MAIN: Overview Content ———
 def create_overview_content():
-    # 1) Pie card
     pie_card = create_visualization_card(
         "Total Enrollees by Level",
         pie_chart_total_enrollees,
-        height=450
+        height=450,
     )
 
     # 2) Combined card for trend and interactive components
@@ -104,41 +111,50 @@ def create_overview_content():
             {"label":"Gender Distribution by Level","value":"category"},
         ],
         value="shs", clearable=False,
-        style={"fontFamily":"Monserrat","width":"45%","display":"inline-block","marginRight":"5%"}
+        style={"fontFamily":"Google Sans, sans--serif", "fontSize":"14px","width":"300px","display":"inline-block","marginRight":"5%", "fontWeight":"Normal"}
     )
     region_select = dcc.Dropdown(
         id="overview-region-dropdown",
         options=[{"label":r,"value":r} for r in REGIONS],
         value="All Regions", clearable=False,
-        style={"fontFamily":"Monserrat","width":"45%","display":"inline-block"}
+        style={"fontFamily":"Google Sans, sans--serif","fontSize":"14px","width":"200px","display":"inline-block", "marginBottom":"10px", "fontWeight":"Normal"}
     )
     
     # Create a combined panel with trend chart and interactive controls
     combined_panel = html.Div([
         # Trend chart section
         html.Div([
-            html.H4("Enrollment Sex Distribution", style={
-                "fontFamily":"Revue","color":"#2D71B8",
-                "fontSize":"20px","fontWeight":"bold","marginBottom":"10px"
+           html.H4("Enrollment Sex Distribution", style={
+            "fontFamily": "Google Sans, sans-serif",
+            "color": "#DE082C",
+            "fontSize": "24px",
+            "marginBottom": "10px",
+            "fontWeight": "Normal",
+            "marginTop": "0px"  # ← This line ensures no space above title
+        }),
+            dcc.Loading(children=[dcc.Graph(figure=enrollment_trend_by_gender, style={"height":"300px"})], type = "circle")
+        ], style={"marginBottom": "30px",
+                "marginTop": "0px",          # ← Removes default padding from above the card
+                "paddingTop": "0px"          # ← Just in case some internal Dash default is adding padding
             }),
-            dcc.Graph(figure=enrollment_trend_by_gender, style={"height":"300px"})
-        ], style={"marginBottom":"30px"}),
         
         # Interactive section
         html.Div([
             html.H4("Gender Distribution Analysis", style={
-                "fontFamily":"Revue","color":"#2D71B8",
-                "fontSize":"20px","marginBottom":"10px", "marginTop":"10px"
+                "fontFamily":"Google Sans, sans-serif",
+                "color":"#DE082C",
+                "fontSize":"24px","marginBottom":"10px",
+                "fontWeight":"Normal",
             }),
             html.Div([chart_select, region_select], style={"marginBottom":"10px"}),
-            dcc.Graph(id="overview-graph", style={"height":"300px"})
+            dcc.Loading(children=[dcc.Graph(id="overview-graph", style={"height":"300px"})], type = "circle")
         ])
     ], style={"height":"100%", "display":"flex", "flexDirection":"column"})
     
     combined_card = create_visualization_card(
         combined_panel,
         "",
-        height=1025  # Match the height of the big card
+        height=1015  # Match the height of the big card
     )
 
     # 3) Stack pie and combined card

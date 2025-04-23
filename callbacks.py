@@ -57,12 +57,14 @@ def register_callbacks(app):
 
     # Overview interactive chart updater
     @app.callback(
-    Output("overview-graph","figure"),
-    Input("overview-chart-dropdown","value"),
-    Input("overview-region-dropdown","value")
-)
-    def update_overview(chart_type, region):
-        df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
+        Output("overview-graph", "figure"),
+        Input("overview-chart-dropdown", "value"),
+        Input("overview-region-dropdown", "value"),
+        State("stored-data", "data")
+    )
+
+    def update_overview(chart_type, region, stored_data):
+        df = pd.DataFrame(stored_data)
         if region != "All Regions":
             df = df[df.Region == region]
         return gender_shs_bar(df) if chart_type == "shs" else gender_bar(df)

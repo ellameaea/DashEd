@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import json
 import os
-from components.overview import create_info_card, create_two_column_layout
+from components.overview import create_info_card, create_two_column_layout, create_visualization_card, create_stacked_cards
 from Data_Visualization.Enrollee_and_School_Analysis.modified_COCs_count import fig
 from Data_Visualization.density_piecharts import public_pie_chart, private_pie_chart
 from Data_Visualization.density_datavis1 import get_total_schools, get_school_crowding_figure, generate_heatmap
@@ -75,9 +75,12 @@ def create_density_content():
     # Create components
     density_main = create_info_card("", card1_content, height=1500)
     card1 = create_info_card("", card2_content, height = 1000)
+    card2 = create_info_card("", "", height= 450)
+    density_stacked_visualization = create_stacked_cards([card1, card2])
 
-    main_section = create_two_column_layout(density_main, card1)
-    bottom_section = create_info_card("Number of Schools by Region and Modified COC", card3_content,width="100%", height=None)
+
+    main_section = create_two_column_layout(density_main, density_stacked_visualization)
+    bottom_section = create_visualization_card("Number of Schools by Region and Modified COC", card3_content, height=None)
 
     # Combine all components
     return html.Div([
