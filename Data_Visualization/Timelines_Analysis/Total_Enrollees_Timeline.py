@@ -1,15 +1,14 @@
+# trend_chart.py
+
 import pandas as pd
 import plotly.express as px
 import os
 import re
-import plotly.io as pio
 
-# Automatically reads files from the CSV folder
-def load_and_process_data(directory):
+def get_enrollment_trend_figure(directory='CSV Files'):
     data = []
     pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
 
-    # Loop through all files in the directory
     for filename in os.listdir(directory):
         match = pattern.match(filename)
         if match:
@@ -17,45 +16,39 @@ def load_and_process_data(directory):
             filepath = os.path.join(directory, filename)
             df = pd.read_csv(filepath)
 
-            # Only sum enrollment columns: those that end with 'Male' or 'Female'
             enrollment_columns = [col for col in df.columns if col.endswith('Male') or col.endswith('Female')]
             total_enrollees = df[enrollment_columns].sum().sum()
-
             data.append({'Year': year, 'Total Enrollees': total_enrollees})
     
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data).sort_values(by='Year')
 
-# Function to plot enrollment trend
-def plot_enrollment_trend(data):
-    """
-    Plot a line chart for total enrollees by year.
-    Args:
-        data (pd.DataFrame): DataFrame containing 'Year' and 'Total Enrollees'.
-    """
-    data = data.sort_values(by='Year') # Sort by year
+    fig = px.line(df, x='Year', y='Total Enrollees', title='',
+                  labels={'Year': 'Year', 'Total Enrollees': 'Total Enrollees'},
+                  markers=True)
+    fig.update_traces(line=dict(color='blue', width=2), marker=dict(size=8))
+    fig.update_layout(title_x=0.5, height=750)
+    fig.update_xaxes(dtick=1, tickformat='.0f')
 
-    # Ensure the 'Year' column is numeric
-    fig = px.line(data, 
-                  x='Year', # X-axis values
-                  y='Total Enrollees', # Y-axis values
-                  title='Total Enrollees by Year', # Chart title
-                  labels={'Year': 'Year', # X-axis label
-                          'Total Enrollees': 'Total Enrollees'}, # Y-axis label
-                  markers=True) # Show markers on the line
-    # Set the template for the chart
-    fig.update_traces(line=dict(color='blue', # Line color
-                                width=2), # Line width
-                      marker=dict(size=8))  # Marker size
-    fig.update_layout(title_x=0.5) # Center the title
+    return fig
+
+def get_latest_total_enrollees(directory='CSV Files'):
+    """
+    Get the total number of enrollees from the most recent year.
+    """
+    data = []
+    pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
+
+    for filename in os.listdir(directory):
+        match = pattern.match(filename)
+        if match:
+            year = int(match.group(1))
+            filepath = os.path.join(directory, filename)
+            df = pd.read_csv(filepath)
+
+            enrollment_columns = [col for col in df.columns if col.endswith('Male') or col.endswith('Female')]
+            total_enrollees = df[enrollment_columns].sum().sum()
+            data.append({'Year': year, 'Total Enrollees': total_enrollees})
     
-    fig.update_xaxes(dtick=1, tickformat='.0f') # Set x-axis ticks to 1 year and format
-    fig.show()
-
-# Set the folder containing the cleaned enrollment files
-csv_folder = 'CSV Files'
-
-# Load and process data
-enrollment_data = load_and_process_data(csv_folder)
-
-# Plot the enrollment trend
-plot_enrollment_trend(enrollment_data)
+    df = pd.DataFrame(data)
+    latest_row = df[df['Year'] == df['Year'].max()]
+    return int(latest_row['Total Enrollees'].values[0])

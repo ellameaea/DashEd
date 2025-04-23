@@ -187,7 +187,6 @@ app.layout = html.Div([
         id='region-level-heatmap',
         figure=heatmap_fig
     )
-
 ])
 
 # Run the Dash app

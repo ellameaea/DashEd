@@ -83,6 +83,7 @@ def display_shs_bar_chart(_):
     )
     fig.update_traces(textposition='inside', # Position text inside bars
                       insidetextanchor='middle') # Position labels inside bars
+
     return fig
 
 # Run app

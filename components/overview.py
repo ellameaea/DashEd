@@ -4,10 +4,9 @@ import pandas as pd
 from dash import html, dcc
 from Data_Visualization.Overview_output import pie_chart_total_enrollees
 from Data_Visualization.phmap import phmap
-from Data_Visualization.Enrollee_Gender_Analysis.Totals_Gender_bar import gender_bar
-from Data_Visualization.Enrollee_Gender_Analysis.Totals_SHS_bar import gender_shs_bar
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
-
+from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure, get_latest_total_enrollees
+from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
 
 # ——— Data & Region List ———
 DF = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
@@ -120,37 +119,84 @@ def create_overview_content():
         html.Div([
             html.H4("Enrollment Sex Distribution", style={
                 "fontFamily":"Revue","color":"#2D71B8",
-                "fontSize":"14px","fontWeight":"bold","marginBottom":"5px"
+                "fontSize":"20px","fontWeight":"bold","marginBottom":"10px"
             }),
             dcc.Graph(figure=enrollment_trend_by_gender, style={"height":"300px"})
-        ], style={"marginBottom":"20px"}),
+        ], style={"marginBottom":"30px"}),
         
         # Interactive section
         html.Div([
             html.H4("Gender Distribution Analysis", style={
                 "fontFamily":"Revue","color":"#2D71B8",
-                "fontSize":"14px","marginBottom":"5px", "marginTop":"10px"
+                "fontSize":"20px","marginBottom":"10px", "marginTop":"10px"
             }),
             html.Div([chart_select, region_select], style={"marginBottom":"10px"}),
-            dcc.Graph(id="overview-graph", style={"height":"260px"})
+            dcc.Graph(id="overview-graph", style={"height":"300px"})
         ])
     ], style={"height":"100%", "display":"flex", "flexDirection":"column"})
     
     combined_card = create_visualization_card(
         combined_panel,
         "",
-        height=840  # Match the height of the big card
+        height=1025  # Match the height of the big card
     )
 
     # 3) Stack pie and combined card
     stacked_visualization = create_stacked_cards([pie_card, combined_card])
 
     # 4) Big placeholder card
-    card3_content = (
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
-        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    )
-    big_card = create_info_card("Title for Data Viz 3", card3_content, height=820)
+    number= get_latest_total_enrollees()
+    card3_title = html.H3([
+    html.Span(f"{number:,} ", style={
+        
+        "fontSize": "70px",
+        "fontWeight": "bold",
+        "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
+        "WebkitBackgroundClip": "text",  
+        "color": "transparent",  
+    }),
+    html.Span("Enrollees", style={
+        "fontSize": "30px",           # Smaller size for "Enrollees"
+        "fontWeight": "normal",        # Regular weight
+        "color": "#084683",            # Dark gray color
+        "marginLeft": "10px",          # Small spacing from the number
+        "fontFamily": "Google Sans, sans--serif",  # Font style
+    })
+])
+    
+    card3_content = html.Div([
+        # Trend Graph (Existing)
+        dcc.Graph(
+            figure=get_enrollment_trend_figure(),
+            config={'displayModeBar': False},
+            style={"height": "500px", "width": "800px"}
+        ),
+        # Dropdown to select education level for heatmap
+        dcc.Dropdown(
+            id='level-dropdown',  # Dropdown to select education level
+            options=[
+                {'label': 'All', 'value': 'All'},
+                {'label': 'Kindergarten', 'value': 'Kindergarten'},
+                {'label': 'ELEM', 'value': 'ELEM'},
+                {'label': 'JHS', 'value': 'JHS'},
+                {'label': 'SHS', 'value': 'SHS'},
+                {'label': 'Subtotal', 'value': 'Subtotal'}
+            ],
+            value='All',
+            clearable=False,
+            style={'width': '300px', 'marginBottom': '20px'}
+        ),
+    
+            # Heatmap (New addition)
+        dcc.Graph(
+            id='region-level-heatmap',
+            figure=get_region_heatmap_figure(selected_level='All'),  # Placeholder for heatmap
+            config={'displayModeBar': False},
+            style={"height": "400px", "width": "800px"}
+        )
+    ], style={'marginTop': '20px'})
+
+    big_card = create_info_card(card3_title, card3_content, height=1500)
 
     main_section = create_two_column_layout(big_card, stacked_visualization)
 
