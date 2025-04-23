@@ -1,8 +1,6 @@
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output
-import plotly.express as px
-from plotly import graph_objects as go
 import numpy as np
+from dash import dcc
 import plotly.graph_objects as go
 
 def get_region_heatmap_figure(selected_level='All'):
@@ -55,109 +53,31 @@ def get_region_heatmap_figure(selected_level='All'):
 
     # Select the data for display
     if selected_level == 'All':
-
-#--ADD-- 
-app.layout = html.Div([
-    html.Div([
-        html.Label("Select Education Level:"), #Label for Dropdown
-        dcc.Dropdown(
-            id='level-dropdown', # Dropdown for selecting education level
-            options=[
-                {'label': 'All', 'value': 'All'}, # Displays all columns
-                {'label': 'Kindergarten', 'value': 'Kindergarten'}, # display kindergarten column
-                {'label': 'ELEM', 'value': 'ELEM'}, # display ELEM column
-                {'label': 'JHS', 'value': 'JHS'}, # display JHS column
-                {'label': 'SHS', 'value': 'SHS'}, # display SHS column
-                {'label': 'Subtotal', 'value': 'Subtotal'} # display subtotal column
-            ],
-            value='All',
-            clearable=False, # Prevents clearing of selection
-            style={'width': '300px'} # Styles the dropdown
-        )
-    ], style={'textAlign': 'center', 'marginBottom': '20px'}), # Centered and spaced
-
-    dcc.Graph(id='region-level-heatmap') # Graph for displaying heatmap
-])
-
-@app.callback(
-    Output('region-level-heatmap', 'figure'), # Output for the heatmap
-    Input('level-dropdown', 'value') # Input for the selected education level
-)
-
-# Callback function to update the heatmap based on selected education level
-def update_heatmap(selected_level):
-    if selected_level == 'All': # If 'All' is selected, show all levels
         display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']]
         x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']
     else:
         display_data = region_heatmap_data.set_index('Region').loc[:, [selected_level]]
         x_axis = [selected_level]
 
+    y_axis = display_data.index.tolist()
     z = display_data.values
 
     # Use a blue colorscale
     custom_colorscale = 'Blues'
 
-    # Get the y-axis labels (regions)
-    y_axis = display_data.index.tolist()
-
-    # Exclude Grand Total for min/max logic
-    filtered = display_data.drop(index='Grand Total', errors='ignore')
-
-    # Determine min/max rows
-    max_idx = filtered[selected_level].idxmax() if selected_level != 'All' else filtered['Subtotal'].idxmax()
-    min_idx = filtered[selected_level].idxmin() if selected_level != 'All' else filtered['Subtotal'].idxmin()
-
-    # Get the values for the heatmap
-    z = display_data.values
-
-    # Create mask for color mapping
-    colors = np.full_like(z, fill_value=0, dtype=int)  # Default = Normal (0)
-
-    for i, region in enumerate(y_axis):
-        for j, level in enumerate(x_axis):
-            if region == max_idx:
-                colors[i][j] = 1  # Max
-            elif region == min_idx:
-                colors[i][j] = -1  # Min
-            elif region == 'Grand Total':
-                colors[i][j] = 2  # Grand Total
-
-    # Normalize to [0, 1] for Plotly
-    value_map = {-1: 0.0, # Min
-                 0: 0.33, # Normal
-                 1: 0.66, # Max
-                 2: 1.0} # Grand Total
-    
-    # Map colors to normalized values
-    normalized_colors = np.vectorize(value_map.get)(colors)     
-
-    # Custom colorscale
-    custom_colorscale = [
-        [0.0, '#DE082C'],  
-        [0.33, '#F0F8FF'],  
-        [0.66, '#F2EC1A'],  
-        [1.0, '#084683']     
-    ]
-
     # Create the heatmap
     fig = go.Figure(data=go.Heatmap(
-        z=normalized_colors, # Normalized values for color mapping
-        x=x_axis, # X-axis labels (education levels)
-        y=y_axis, # Y-axis labels (regions)
-        text=z, # Original values for display
-        texttemplate="%{text}", # Display original values
-        colorscale=custom_colorscale, # Custom colorscale
-        zmin=0, # Min value for color mapping
-        zmax=1, # Max value for color mapping
-        showscale=False, # Hide color scale
-        #--ADD--
+        z=z,
+        x=x_axis,
+        y=y_axis,
+        text=z,
+        texttemplate="%{text}",
+        colorscale=custom_colorscale,
         colorbar=dict(title='Enrollment'),  # Shows color bar on the side
         xgap=1,  # Horizontal grid space
         ygap=1   # Vertical grid space
     ))
 
-    # Add annotations for the values
     fig.update_layout(
         title=f"Enrollment Heatmap by Region - {selected_level if selected_level != 'All' else 'All Levels'}",
         title_font=dict(
@@ -165,16 +85,13 @@ def update_heatmap(selected_level):
             size=24,
             color="#DE082C"
         ),
-        xaxis=dict(title="Education Level", side="top"), # X-axis title
-        yaxis_title="Region", # Y-axis title
-        plot_bgcolor='#C9E1E6',     # Optional: makes grid gaps visible
-        height=800, # Height of the heatmap
-        width=800, # Width of the heatmap
-        margin=dict(l=100, r=50, t=100, b=100), # Margin settings
-        font=dict(size=10) # Font size for the text
+        xaxis=dict(title="Education Level", side="top"),
+        yaxis_title="Region",
+        plot_bgcolor='#C9E1E6',
+        height=800,
+        width=800,
+        margin=dict(l=100, r=50, t=100, b=100),
+        font=dict(size=10)
     )
 
     return fig
-
-if __name__ == '__main__':
-    app.run(port=8051, debug=True)
