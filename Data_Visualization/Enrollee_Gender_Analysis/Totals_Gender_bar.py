@@ -96,9 +96,9 @@ def gender_bar(df = None):
             range=[0, 100] # Range for X-axis
         ),
         yaxis_title='Category', # Y-axis title
-        height=300, # Height of the chart
+        height=400, # Height of the chart
         legend_title='Gender', # Legend title
-        margin=dict(l=20, r=20, t=60, b=20) # Margin settings
+        margin=dict(l=20, r=20, t=60, b=60) # Margin settings
     )
     fig.update_traces(textposition='inside', insidetextanchor='middle') # Position labels inside bars
 

@@ -25,44 +25,9 @@ def k_to_10(regions, selected_region):
     # Group data
     grouped = melted_df.groupby(['Region', 'Grade Level', 'Gender'], as_index=False)['Enrollees'].sum()
 
-    # # Regions including "All"
-    # regions = sorted(grouped['Region'].unique())
-    # regions_with_all = ['All'] + regions
-
     # Grade level order
     grade_order = ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10']
 
-    # Dash app
-    # app = dash.Dash(__name__, external_stylesheets=[
-    #     "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-    # ])
-
-    # # Layout
-    # app.layout = html.Div([
-    #     html.H2("Male and Female Enrollees per Grade Level (K to G10)", className="text-center mt-4"),
-
-    #     html.Div([
-    #         html.Label("Select Region:"),
-    #         dcc.Dropdown(
-    #             id='region-dropdown',
-    #             options=[{'label': region, 'value': region} for region in regions_with_all],
-    #             value='All',
-    #             clearable=False,
-    #             style={'width': '70%'}
-    #         )
-    #     ], className="d-flex justify-content-center mt-3", style={'width': '50%'}),
-
-    #     html.Div([
-    #         dcc.Graph(id='bar-chart')
-    #     ], className="mt-4 px-4")
-    # ])
-
-    # # Callback
-    # @app.callback(
-    #     Output('bar-chart', 'figure'),
-    #     [Input('region-dropdown', 'value')]
-    # )
-    # def update_bar_chart(selected_region):
     if selected_region == 'All':
             # Filter and group
             filtered = grouped.copy()
@@ -135,7 +100,3 @@ def k_to_10(regions, selected_region):
             fig.update_traces(textposition='auto')
 
     return fig
-
-# # Run app
-# if __name__ == '__main__':
-#     app.run(debug=True)
