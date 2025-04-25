@@ -42,19 +42,24 @@ def get_region_heatmap_figure(selected_level='All'):
     for level, columns in combined_levels.items():
         region_heatmap_data[level] = region_level_totals[columns].sum(axis=1)
 
-    region_heatmap_data['Subtotal'] = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS']].sum(axis=1)
+    # Added Total NG column
+    ng_columns = ['Elem NG Male', 'Elem NG Female', 'JHS NG Male', 'JHS NG Female']
+    region_heatmap_data['Total NG'] = region_level_totals[ng_columns].sum(axis=1)
+
+    region_heatmap_data['Subtotal'] = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS']].sum(axis=1) # Don't include Total NG in the subtotal
 
     # Add Grand Total row
-    grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']].sum()
+    grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG', 'Subtotal']].sum()
     grand_total_row = pd.DataFrame([['Grand Total'] + grand_totals.tolist()], columns=region_heatmap_data.columns)
 
     region_heatmap_data = pd.concat([region_heatmap_data, grand_total_row], ignore_index=True)
     region_heatmap_data = region_heatmap_data.iloc[::-1].reset_index(drop=True)
 
     # Select the data for display
+    # April 25, 2025 changes: added total NG in display_data
     if selected_level == 'All':
-        display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']]
-        x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']
+        display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG', 'Subtotal']]
+        x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG', 'Subtotal']
     else:
         display_data = region_heatmap_data.set_index('Region').loc[:, [selected_level]]
         x_axis = [selected_level]
@@ -62,12 +67,49 @@ def get_region_heatmap_figure(selected_level='All'):
     y_axis = display_data.index.tolist()
     z = display_data.values
 
-    # Use a blue colorscale
-    custom_colorscale = 'Blues'
+    # Code for minimum/maximum coloring!!
+    # To exclude Grand Total from the min/max logic
+    filtered = display_data.drop(index='Grand Total', errors='ignore')
+    # Determine min/max rows
+    max_idx = filtered[selected_level].idxmax() if selected_level != 'All' else filtered['Subtotal'].idxmax()
+    min_idx = filtered[selected_level].idxmin() if selected_level != 'All' else filtered['Subtotal'].idxmin()
+
+    # Create mask for color mapping
+    colors = np.full_like(z, fill_value=0, dtype=int)
+
+    for i, region in enumerate(y_axis):
+        for j, level in enumerate(x_axis):
+            if region == max_idx:
+                colors[i][j] = 1  # Max
+            elif region == min_idx:
+                colors[i][j] = -1  # Min
+            elif region == 'Grand Total':
+                colors[i][j] = 2  # Grand Total
+    
+    # Normalize to [0, 1] for Plotly
+    value_map = {-1: 0.0, # Min
+                 0: 0.33, # Normal
+                 1: 0.66, # Max
+                 2: 1.0} # Grand Total
+    
+    # Map colors to normalized values
+    normalized_colors = np.vectorize(value_map.get)(colors)     
+
+    # Custom colorscale
+    custom_colorscale = [
+        [0.0, '#DE082C'],  
+        [0.33, '#F7FBFE'],  
+        [0.66, '#F2EC1A'],  
+        [1.0, '#084683']     
+    ]
+
+    # Use a blue colorscale (temporarily commented out)
+    # custom_colorscale = 'Blues'
 
     # Create the heatmap
     fig = go.Figure(data=go.Heatmap(
-        z=z,
+        showscale=False, # Hide color scale
+        z=normalized_colors,
         x=x_axis,
         y=y_axis,
         text=z,

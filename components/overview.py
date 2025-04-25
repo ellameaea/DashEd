@@ -180,6 +180,7 @@ def create_overview_content():
                 {'label': 'ELEM', 'value': 'ELEM'},
                 {'label': 'JHS', 'value': 'JHS'},
                 {'label': 'SHS', 'value': 'SHS'},
+                {'label': 'Total NG', 'value': 'Total NG'}, # to count how many total NG students there are per region
                 {'label': 'Subtotal', 'value': 'Subtotal'}
             ],
             value='All',
