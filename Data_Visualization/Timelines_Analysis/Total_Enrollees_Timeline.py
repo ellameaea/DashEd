@@ -35,6 +35,8 @@ def get_latest_total_enrollees(directory='CSV Files'):
     """
     Get the total number of enrollees from the most recent year.
     """
+    # careful with this. Make sure that the correct year is selected. 
+    # title_enrollees for overview.py
     data = []
     pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
 
