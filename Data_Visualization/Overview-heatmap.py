@@ -46,11 +46,15 @@ region_heatmap_data['Region'] = region_level_totals['Region']
 for level, columns in combined_levels.items():
     region_heatmap_data[level] = region_level_totals[columns].sum(axis=1)
 
-# Calculate subtotal for each region
+# Add Total NG column
+ng_columns = ['Elem NG Male', 'Elem NG Female', 'JHS NG Male', 'JHS NG Female']
+region_heatmap_data['Total NG'] = region_level_totals[ng_columns].sum(axis=1)
+
+# Calculate subtotal for each region (excluding Total NG from subtotal)
 region_heatmap_data['Subtotal'] = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS']].sum(axis=1)
 
 # Calculate grand total for each region
-grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']].sum()
+grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG', 'Subtotal']].sum()
 grand_total_row = pd.DataFrame([['Grand Total'] + grand_totals.tolist()], columns=region_heatmap_data.columns)
 
 # Append grand total row to the DataFrame
@@ -70,6 +74,7 @@ app.layout = html.Div([
                 {'label': 'ELEM', 'value': 'ELEM'}, # display ELEM column
                 {'label': 'JHS', 'value': 'JHS'}, # display JHS column
                 {'label': 'SHS', 'value': 'SHS'}, # display SHS column
+                {'label': 'Total NG', 'value': 'Total NG'}, # display Total NG column
                 {'label': 'Subtotal', 'value': 'Subtotal'} # display subtotal column
             ],
             value='All',
@@ -89,8 +94,8 @@ app.layout = html.Div([
 # Callback function to update the heatmap based on selected education level
 def update_heatmap(selected_level):
     if selected_level == 'All': # If 'All' is selected, show all levels
-        display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']]
-        x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']
+        display_data = region_heatmap_data.set_index('Region').loc[:, ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG','Subtotal']]
+        x_axis = ['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Total NG','Subtotal']
     else:
         display_data = region_heatmap_data.set_index('Region').loc[:, [selected_level]]
         x_axis = [selected_level]
@@ -132,7 +137,7 @@ def update_heatmap(selected_level):
     # Custom colorscale
     custom_colorscale = [
         [0.0, '#DE082C'],  
-        [0.33, '#F0F8FF'],  
+        [0.33, '#F7FBFE'],  
         [0.66, '#F2EC1A'],  
         [1.0, '#084683']     
     ]
