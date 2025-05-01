@@ -62,7 +62,7 @@ region_summary = df.groupby('Region').agg({
 region_summary.rename(columns={'BEIS School ID': 'Number of Schools'}, inplace=True)
 
 # Calculate crowding metric
-region_summary['Schools per Enrollee'] = (region_summary['Total Enrollees'] / region_summary['Number of Schools']) * 100
+region_summary['Schools per Enrollee'] = (region_summary['Number of Schools'] / region_summary['Total Enrollees']) * 100
 
 # Merge the two datasets
 merged_df = pd.merge(subclassification_df, region_summary, on='Region')
