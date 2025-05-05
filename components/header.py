@@ -13,7 +13,7 @@ def create_header():
                             html.Img(
                                 src="/assets/logo.png",
                                 style={
-                                    "height": "70px",
+                                    "height": "50px", #70px
                                     "margin-top": "5px",
                                     "margin-bottom": "0px",
                                 }

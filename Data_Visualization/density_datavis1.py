@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from collections import defaultdict
+import csv
 
 # Load the dataset
 file_path = "CSV Files/CLEANED_SY2023_Enrollment.csv"
@@ -108,7 +110,7 @@ def get_school_crowding_figure():
             xanchor='right'
         ),
         dict(
-            text="<b>Student Population Heatmap by Region and Strand</b>",
+            text="<b>School Crowding Analysis</b>",
             xref="paper", yref="paper",
             x=0, y=-0.8,
             showarrow=False,
@@ -123,41 +125,79 @@ def get_school_crowding_figure():
 # Load CSV
 combined_population_df = pd.read_csv('CSV Files/combined_population_2023.csv')
 
-# Generate default heatmap for 'G11'
-def generate_heatmap(selected_grade='G11'):
-    grade_columns = [col for col in combined_population_df.columns if f'{selected_grade} ' in col and 'Total' in col]
-    if not grade_columns:
-        return px.imshow([[0]], labels=dict(x="Strand", y="Region", color="Students"),
-                         title=f"No data available for Grade {selected_grade}")
+def get_subclassification_bubble_chart():
+    file_name = "CSV Files/CLEANED_SY2023_Enrollment.csv"
 
-    melted_df = combined_population_df.melt(
-        id_vars=['Region'],
-        value_vars=grade_columns,
-        var_name="Strand",
-        value_name="Total Students"
-    )
-    melted_df['Strand'] = melted_df['Strand'].str.extract(r'(\b[A-Za-z]+\b)')
-    aggregated_df = melted_df.groupby(['Region', 'Strand'], as_index=False).sum()
-    heatmap_data = aggregated_df.pivot(index='Region', columns='Strand', values='Total Students').fillna(0)
+    # Count subclassifications per region
+    region_subclassification_counts = defaultdict(lambda: defaultdict(int))
+    with open(file_name, mode='r', encoding='utf-8') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            region = row['Region']
+            subclassification = row['School Subclassification']
+            region_subclassification_counts[region][subclassification] += 1
 
-    fig = px.imshow(
-        heatmap_data,
-        labels=dict(x="Strand", y="Region", color="Students"),
-        x=heatmap_data.columns,
-        y=heatmap_data.index,
-        color_continuous_scale="viridis",
-        text_auto=True,
-        aspect="auto"
+    subclassification_data = []
+    for region, subclassifications in region_subclassification_counts.items():
+        for subclassification, count in subclassifications.items():
+            subclassification_data.append({
+                'Region': region,
+                'School Subclassification': subclassification,
+                'Count': count
+            })
+    subclassification_df = pd.DataFrame(subclassification_data)
+
+    # Load enrollee data
+    df = pd.read_csv(file_name)
+
+    enrollee_columns = [col for col in df.columns if 'Male' in col or 'Female' in col]
+    df['Total Enrollees'] = df[enrollee_columns].sum(axis=1)
+
+    region_summary = df.groupby('Region').agg({
+        'Total Enrollees': 'sum',
+        'BEIS School ID': 'nunique'
+    }).reset_index()
+
+    region_summary.rename(columns={'BEIS School ID': 'Number of Schools'}, inplace=True)
+    region_summary['Schools per Enrollee'] = (region_summary['Number of Schools'] / region_summary['Total Enrollees']) * 100
+
+    merged_df = pd.merge(subclassification_df, region_summary, on='Region')
+
+    fig = px.scatter(
+        merged_df,
+        x='Schools per Enrollee',
+        y='Count',
+        size='Count',
+        size_max=60,
+        color='School Subclassification',
+        hover_name='Region',
+        title='Comparison of Schools per Enrollee and School Subclassification Counts',
+        labels={'Schools per Enrollee': 'Schools per Enrollee (%)', 'Count': 'School Subclassification Count'},
+        template='plotly'
     )
+    
     fig.update_layout(
-        xaxis_title="Strand",
-        yaxis_title="Region",
-        autosize=False,
-        width=700,
-        height=550,
-        margin=dict(l=100, r=50, t=40, b=100),
-        font=dict(size=10),
+        title_font_size=15,
+        margin=dict(b=200),  # Adjust margin (lower the bottom margin)
+        height=600,  # Fix the height of the chart to ensure it doesn't overflow
     )
-    fig.update_xaxes(tickangle=45)
 
+    return fig
+
+def add_annotation(fig):
+    # Hardcoded custom text annotation
+    annotation_text = "<span style='color:#B03B60; font-weight:bold;'>Enrollment Analytics:</span><br>" \
+                      "Expect a <b>n%</b> increase in this region next year.<br>" \
+                      "Projected Students for Year n+1: <b>28,057,844</b><br>" \
+                      "<b>{region}</b> has the highest amount of enrollees for 2024"
+
+    fig.add_annotation(
+        text=annotation_text,
+        xref="paper", yref="paper",
+        x=0, y=-0.6,  # Adjust the y-value to place the annotation below the chart
+        showarrow=False,
+        align="left",
+        font=dict(size=18),
+        xanchor="left",
+    )
     return fig

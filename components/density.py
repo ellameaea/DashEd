@@ -8,7 +8,7 @@ import os
 from components.overview import create_info_card, create_two_column_layout, create_visualization_card, create_stacked_cards
 from Data_Visualization.Enrollee_and_School_Analysis.modified_COCs_count import fig
 from Data_Visualization.density_piecharts import public_pie_chart, private_pie_chart
-from Data_Visualization.density_datavis1 import get_total_schools, get_school_crowding_figure, generate_heatmap
+from Data_Visualization.density_datavis1 import get_total_schools, get_school_crowding_figure, get_subclassification_bubble_chart, add_annotation
 
 total_schools = get_total_schools()
 
@@ -53,16 +53,12 @@ def create_density_content():
         dcc.Graph(id='school-crowding-chart', figure=get_school_crowding_figure(), config={'responsive': True})
     ], style={"paddingTop": "0"}),
 
-    html.Div([  # This is the corrected block
-        html.H4(style={
-            "textAlign": "center", 
-            "marginTop": "10px",  
-            "fontFamily": "Montserrat"
-        }),
-        html.Div([
-            dcc.Graph(id='heatmap-graph', figure=generate_heatmap('G11'), config={'responsive': True})
-        ], style={"display": "flex", "justifyContent": "flex-end"})  # Align the graph to the right
-    ], style={"paddingTop": "0"})  # Ensure this is correctly closed
+    html.Div([
+        # Apply the annotation here
+        dcc.Graph(id='subclassification-bubble-chart', 
+                  figure=add_annotation(get_subclassification_bubble_chart()), 
+                  config={'responsive': True})
+    ], style={"paddingTop": "10px", "paddingBottom": "90px"})
 ])
 
     card2_content = html.Div([ 
@@ -73,7 +69,7 @@ def create_density_content():
     card3_content = html.Div(dcc.Graph(id='stacked-bar-chart', figure=fig, config={'responsive': True}, style={"height": "100%"}), style={"height": "auto"})
     
     # Create components
-    density_main = create_info_card("", card1_content, height=1500)
+    density_main = create_info_card("", card1_content, height=1400)
     card1 = create_info_card("", card2_content, height = 1000)
     card2 = create_info_card("", "", height= 450)
     density_stacked_visualization = create_stacked_cards([card1, card2])
