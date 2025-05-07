@@ -36,7 +36,7 @@ def public_pie_chart():
         sort=False,
         textinfo='label',  
         textposition='outside',  
-        showlegend=True 
+        showlegend=False 
     )
 
     # Pie chart for percentages inside
@@ -48,7 +48,7 @@ def public_pie_chart():
         textinfo='percent',  
         textposition='inside',  
         insidetextfont=dict(color="black"), 
-        showlegend=True  
+        showlegend=False  
     )
 
     # Combine the two traces
@@ -111,13 +111,13 @@ def private_pie_chart():
         textinfo='percent',  
         textposition='inside',  
         insidetextfont=dict(color="black"),  
-        showlegend=True  
+        showlegend=False  
     )
 
     # Combine the two traces
     fig = go.Figure(data=[labels_trace, percentages_trace])
     
-    fig.update_layout(title="", height=390, legend_title_text="Grade Levels", legend=dict(
+    fig.update_layout(title="", height=600, legend_title_text="Grade Levels", legend=dict(
         title="Grade Levels",  
         borderwidth=1,  
         bordercolor="lightgray", 
