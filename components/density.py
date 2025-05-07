@@ -9,6 +9,8 @@ from components.overview import create_info_card, create_two_column_layout, crea
 from Data_Visualization.Enrollee_and_School_Analysis.modified_COCs_count import fig
 from Data_Visualization.density_piecharts import public_pie_chart, private_pie_chart
 from Data_Visualization.density_datavis1 import get_total_schools, get_school_crowding_figure, get_subclassification_bubble_chart, add_annotation
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_private import private_deficiency_chart
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_public import public_deficiency_chart
 
 total_schools = get_total_schools()
 
@@ -61,17 +63,125 @@ def create_density_content():
     ], style={"paddingTop": "10px", "paddingBottom": "90px"})
 ])
 
-    card2_content = html.Div([ 
-        html.Div(dcc.Graph(id='private-pie-chart', figure=private_pie_chart(), config={'responsive': True}, style={"height": "50%"})),
-        html.Div(dcc.Graph(id='public-pie-chart', figure=public_pie_chart(), config={'responsive': True}, style={"height": "50%"}))
-    ], style={"max-height": "820px", "display": "flex", "flexDirection": "column"})
+    private_content = html.Div([html.P(["Enrollee Distribution",html.Br(),"for Private and PSO Schools"], style={
+        "fontFamily": "Google Sans, sans-serif",
+        "color": "#DE082C",
+        "textAlign": "left",
+        "fontSize": "25px",
+        "marginBottom": "0px"
+    }),
+    html.Div(
+        dcc.Graph(
+            id='private-pie-chart',
+            figure=private_pie_chart(),
+            config={'responsive': True},
+            style={"height": "261px"} 
+        ),
+        style={"marginBottom": "0px"}  
+    ),
+    html.P("Enrollment Deficiency Analysis", style={
+        "fontFamily": "Google Sans, sans-serif",
+        "color": "#DE082C",
+        "textAlign": "left",
+        "fontSize": "20px",
+        "marginBottom": "0px"
+    }),
+
+    dcc.Dropdown(
+        id='private-deficiency-dropdown',
+        options=[
+            {'label': 'Total', 'value': 'total'},
+            {'label': 'By Education Level', 'value': 'by_level'}
+        ],
+        value='total',
+        clearable=False,
+        style={
+            "width": "150px",
+            "height":"14px",
+            "border-radius":"7px",
+            "fontSize": "12px",
+            "marginBottom": "23px",
+            "padding": "0px 0px 0px 0px"
+            }
+    ),
+
+    html.Div(
+        dcc.Graph(
+            id='private-deficiency-graph',
+            config={'responsive': True},
+            style={"height": "261px"}  
+        )
+    )
+], style={
+    "height": "700px",  
+    "display": "flex",
+    "flexDirection": "column"
+})
+
+
+
+    public_content = html.Div([html.P(["Enrollee Distribution",html.Br(),"for Public and SUCs/LUCs Schools"], style={
+        "fontFamily": "Google Sans, sans-serif",
+        "color": "#DE082C",
+        "textAlign": "left",
+        "fontSize": "25px",
+        "marginBottom": "0px"
+    }),
+    html.Div(
+        dcc.Graph(
+            id='public-pie-chart',
+            figure=public_pie_chart(),
+            config={'responsive': True},
+            style={"height": "261px"}  
+        ),
+        style={"marginBottom": "0px"}
+    ),
+    html.P("Enrollment Deficiency Analysis", style={
+        "fontFamily": "Google Sans, sans-serif",
+        "color": "#DE082C",
+        "textAlign": "left",
+        "fontSize": "20px",
+        "marginBottom": "0px"
+    }),
+
+    dcc.Dropdown(
+        id='public-deficiency-dropdown',
+        options=[
+            {'label': 'Total', 'value': 'total'},
+            {'label': 'By Education Level', 'value': 'by_level'}
+        ],
+        value='total',
+        clearable=False,
+        style={
+            "width": "150px",
+            "height":"14px",
+            "border-radius":"7px",
+            "fontSize": "12px",
+            "marginBottom": "23px",
+            "padding": "0px 0px 0px 0px"
+            }
+    ),
+
+    html.Div(
+        dcc.Graph(
+            id='public-deficiency-graph',
+            config={'responsive': True},
+            style={"height": "261px"}  
+        )
+    )
+], style={
+    "height": "700px",
+    "display": "flex",
+    "flexDirection": "column"
+})
+
 
     card3_content = html.Div(dcc.Graph(id='stacked-bar-chart', figure=fig, config={'responsive': True}, style={"height": "100%"}), style={"height": "auto"})
     
     # Create components
     density_main = create_info_card("", card1_content, height=1400)
-    card1 = create_info_card("", card2_content, height = 1000)
-    card2 = create_info_card("", "", height= 450)
+    card1 = create_info_card("", private_content, height = 690)
+    card2 = create_info_card("", public_content, height= 690)
     density_stacked_visualization = create_stacked_cards([card1, card2])
 
 

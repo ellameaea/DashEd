@@ -7,6 +7,13 @@ from callbacks import register_callbacks
 import plotly.graph_objects as go
 from components.header import create_header
 from components.tabs import create_tabs
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Indiv_private_deficiency import indiv_private_deficiency_chart
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_private import private_deficiency_chart
+
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_public import public_deficiency_chart
+from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Indiv_public_deficiency import indiv_public_deficiency_chart
+
+
 # from flask_caching import Cache
 
 # cache = Cache(app.server, config={"CACHE_TYPE": "simple"})
@@ -65,6 +72,28 @@ register_callbacks(app)
 def update_region_heatmap_figure(selected_level):
     from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
     return get_region_heatmap_figure(selected_level)
+
+# For Density Dropdown (Private)
+@app.callback(
+    Output('private-deficiency-graph', 'figure'),
+    Input('private-deficiency-dropdown', 'value')
+)
+def update_private_deficiency_graph(selected_option):
+    if selected_option == 'by_level':
+        return indiv_private_deficiency_chart()
+    return private_deficiency_chart()
+
+# For Density Dropdown (Public)
+@app.callback(
+    Output('public-deficiency-graph', 'figure'),
+    Input('public-deficiency-dropdown', 'value')
+)
+def update_public_deficiency_chart(selected_option):
+    if selected_option == 'total':
+        return public_deficiency_chart()
+    else:
+        return indiv_public_deficiency_chart()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
