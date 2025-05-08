@@ -13,26 +13,31 @@ DF = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 REGIONS = ["All Regions"] + sorted(DF["Region"].dropna().unique().tolist())
 
 # ——— Helper: Info Card ———
-def create_info_card(title, content, height=300, width=None,
+def create_info_card(title, content, height=None, width=None,
                      gradient="linear-gradient(133deg, rgba(249,249,249,0.13) 0%, rgba(8,70,131,1) 70%, rgba(222,8,44,1) 80%)"):
     return html.Div([
         html.Div([
             html.H3(title, style={
-                "fontFamily":"Revue","color":"#2D71B8",
-                "fontSize":"16px","fontWeight":"bold","marginBottom":"10px"
+                "fontFamily": "Revue", "color": "#2D71B8",
+                "fontSize": "16px", "fontWeight": "bold", "marginBottom": "10px"
             }),
-            # if content is a string, renders <p>; if it's a component, renders it directly
-            html.Div(content) if hasattr(content, "id") or isinstance(content, (html.Div, dcc.Graph)) 
-                             else html.P(content, style={"fontFamily":"Montserrat","fontSize":"12px","color":"#333"})
+            html.Div(content) if hasattr(content, "id") or isinstance(content, (html.Div, dcc.Graph))
+            else html.P(content, style={"fontFamily": "Montserrat", "fontSize": "12px", "color": "#333"})
         ], style={
-            "padding":"15px 20px","background":"white",
-            "borderRadius":"8px","height":f"{height}px",
-            **({"width":f"{width}px"} if width else {}),
-            "boxShadow":"0 2px 5px rgba(0,0,0,0.1)"
+            "padding": "15px 20px",
+            "background": "white",
+            "borderRadius": "8px",
+            **({"height": f"{height}px"} if height else {}),
+            **({"width": f"{width}px"} if width else {}),
+            "boxShadow": "0 2px 5px rgba(0,0,0,0.1)",
+            "flex": "1"
         })
     ], style={
-        "background":gradient,"padding":"2px",
-        "borderRadius":"10px","display":"inline-block"
+        "background": gradient,
+        "padding": "2px",
+        "borderRadius": "10px",
+        "display": "flex",
+        "flex": "1"
     })
 
 # ——— Helper: Visualization Card ———
@@ -71,21 +76,23 @@ def create_visualization_card(title, chart_component, description=None,
 def create_two_column_layout(left_component, right_component):
     return html.Div([
         html.Div([left_component], style={
-            "flex":"1 1 60%","minWidth":"300px",
-            "display":"flex","flexDirection":"column"
+            "flex":"1 1 60%",
+            "display": "flex",
+            "flexDirection": "column",
+            "paddingRight": "10px"  # ✅ prevents content hugging the divider
         }),
         html.Div([right_component], style={
-            "flex":"1 1 35%",
-            "minWidth":"250px",
-            "display":"flex",
-            "flexDirection":"column",
-            "minHeight": "1500px"  # Optional but enforces vertical symmetry
+            "flex": "1 1 35%",
+            "display": "flex",
+            "flexDirection": "column",
+            "paddingLeft": "10px"   # ✅ prevents crowding at the edge
         })
-
     ], style={
-        "display":"flex","flexWrap":"wrap",
-        "justifyContent":"space-between","alignItems":"stretch",
-        "gap":"20px","marginBottom":"20px"
+        "display": "flex",
+        "flexWrap": "nowrap",           # Prevents wrapping
+        "alignItems": "stretch",        # Ensures columns match height
+        "gap": "20px",
+        "width": "100%"
     })
 
 # ——— Helper: Stack Cards Vertically ———
@@ -154,7 +161,7 @@ def create_overview_content():
     combined_card = create_visualization_card(
         combined_panel,
         "",
-        height=1015  # Match the height of the big card
+        height=1025  # Match the height of the big card
     )
 
     # 3) Stack pie and combined card
@@ -226,7 +233,7 @@ def create_overview_content():
     )
 
     # 6) Compose and return
-    return html.Div(
-        [main_section, map_card],
+    return html.Div([
+        html.Div(main_section, style={"marginBottom": "30px"}), map_card],
         style={"maxWidth":"1400px","margin":"0 auto","padding":"10px"}
     )

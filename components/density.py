@@ -68,14 +68,14 @@ def create_density_content():
         "color": "#DE082C",
         "textAlign": "left",
         "fontSize": "25px",
-        "marginBottom": "0px"
+        # "marginBottom": "0px"
     }),
     html.Div(
         dcc.Graph(
             id='private-pie-chart',
             figure=private_pie_chart(),
             config={'responsive': True},
-            style={"height": "261px"} 
+            style={"height": "325px", "width": "100%"} 
         ),
         style={"marginBottom": "0px"}  
     ),
@@ -113,7 +113,7 @@ def create_density_content():
         )
     )
 ], style={
-    "height": "700px",  
+    "height": "750px",  
     "display": "flex",
     "flexDirection": "column"
 })
@@ -132,7 +132,7 @@ def create_density_content():
             id='public-pie-chart',
             figure=public_pie_chart(),
             config={'responsive': True},
-            style={"height": "261px"}  
+            style={"height": "325px", "width": "100%"}  
         ),
         style={"marginBottom": "0px"}
     ),
@@ -170,7 +170,7 @@ def create_density_content():
         )
     )
 ], style={
-    "height": "700px",
+    "height": "750px",
     "display": "flex",
     "flexDirection": "column"
 })
@@ -179,24 +179,24 @@ def create_density_content():
     card3_content = html.Div(dcc.Graph(id='stacked-bar-chart', figure=fig, config={'responsive': True}, style={"height": "100%"}), style={"height": "auto"})
     
     # Create components
-    density_main = create_info_card("", card1_content, height=1400)
-    card1 = create_info_card("", private_content, height = 690)
-    card2 = create_info_card("", public_content, height= 690)
+    density_main = create_info_card("", card1_content, height=None)
+    card1 = create_info_card("", private_content, height = None)
+    card2 = create_info_card("", public_content, height= None)
     density_stacked_visualization = create_stacked_cards([card1, card2])
 
 
     main_section = create_two_column_layout(density_main, density_stacked_visualization)
     bottom_section = create_visualization_card("Number of Schools by Region and Modified COC", card3_content, height=None)
 
-    # Combine all components
     return html.Div([
-        main_section,
+        html.Div(main_section, style={"marginBottom": "30px"}),
         bottom_section
     ], style={
         "max-width": "1400px", 
         "margin": "0 auto", 
-        "padding": "20px", 
+        "padding": "10px 20px",  
         "display": "flex", 
         "flexDirection": "column",  
         "boxSizing": "border-box"
     })
+
