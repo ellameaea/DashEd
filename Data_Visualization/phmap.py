@@ -52,7 +52,14 @@ def phmap():
         center={'lat': 12.8797, 'lon': 121.7740},
         mapbox_style='carto-positron',
         zoom=5,
-        color_continuous_scale='Plasma',
+        #color_continuous_scale='Plasma',
+        #color_continuous_scale=['#0174DF', '#0154A2', '#DE082C', '#F2EC1A'], 
+        color_continuous_scale=[
+    [0.0, '#0174DF'],
+    [0.33, '#0154A2'],
+    [0.66, '#DE082C'],
+    [1.0, '#F2EC1A']
+],
         labels={'Total_Enrollees': 'Total Enrollees'},
         hover_data={
             'Region': True,

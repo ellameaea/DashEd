@@ -28,6 +28,8 @@ def public_pie_chart():
     level_enrollment_df = pd.DataFrame(level_enrollment.items(), columns=['Level', 'Total Enrollment'])
     level_enrollment_df['Percentage'] = (level_enrollment_df['Total Enrollment'] / level_enrollment_df['Total Enrollment'].sum()) * 100
 
+    custom_colors = ['#0174DF', '#0154A2', '#F2EC1A', '#DE082C']
+
     # Pie chart for labels outside
     labels_trace = go.Pie(
         labels=level_enrollment_df['Level'], 
@@ -36,6 +38,7 @@ def public_pie_chart():
         sort=False,
         textinfo='label',  
         textposition='outside',  
+        marker=dict(colors=custom_colors),
         showlegend=False 
     )
 
@@ -48,6 +51,7 @@ def public_pie_chart():
         textinfo='percent',  
         textposition='inside',  
         insidetextfont=dict(color="black"), 
+        marker=dict(colors=custom_colors),
         showlegend=False  
     )
 
@@ -91,6 +95,8 @@ def private_pie_chart():
     level_enrollment_df = pd.DataFrame(level_enrollment.items(), columns=['Level', 'Total Enrollment'])
     level_enrollment_df['Percentage'] = (level_enrollment_df['Total Enrollment'] / level_enrollment_df['Total Enrollment'].sum()) * 100
 
+    custom_colors = ['#0174DF', '#0154A2', '#F2EC1A', '#DE082C']
+
     # Pie chart for labels outside
     labels_trace = go.Pie(
         labels=level_enrollment_df['Level'], 
@@ -98,7 +104,8 @@ def private_pie_chart():
         hole=0,
         sort=False,
         textinfo='label',  
-        textposition='outside',  
+        textposition='outside',
+        marker=dict(colors=custom_colors),  
         showlegend=False 
     )
 
@@ -110,7 +117,8 @@ def private_pie_chart():
         sort=False,
         textinfo='percent',  
         textposition='inside',  
-        insidetextfont=dict(color="black"),  
+        insidetextfont=dict(color="black"),
+        marker=dict(colors=custom_colors),  
         showlegend=False  
     )
 

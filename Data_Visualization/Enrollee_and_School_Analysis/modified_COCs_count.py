@@ -20,11 +20,14 @@ df['Modified COC'] = pd.Categorical(df['Modified COC'], categories=coc_ranking, 
 total_schools_per_region = grouped.groupby('Region')['size'].sum().reset_index()
 
 # Assign custom colors: first one = #636efa, rest = lighter shades
-primary_color = '#636efa'
-light_colors = [
-    '#aab6ff', '#c5ccff', '#dbe0ff', '#e8ebff', '#f0f2ff', '#f5f6ff', '#fafbff'
-]
-custom_colors = [primary_color] + light_colors[:len(coc_ranking) - 1]
+#primary_color = '#636efa'
+#light_colors = [
+    #'#aab6ff', '#c5ccff', '#dbe0ff', '#e8ebff', '#f0f2ff', '#f5f6ff', '#fafbff'
+#]
+#custom_colors = [primary_color] + light_colors[:len(coc_ranking) - 1]
+
+custom_palette = ['#084683', '#DE082C', '#F2EC1A', '#D9D9D9', '#0174DF']
+custom_colors = (custom_palette * ((len(coc_ranking) // len(custom_palette)) + 1))[:len(coc_ranking)]
 
 # Create stacked bar chart manually with go.Figure for more control
 fig = go.Figure()

@@ -49,8 +49,8 @@ def plot_enrollment_trend_by_gender(data):
         title='Total Male vs Female Enrollees by Year',
         markers=True,
         color_discrete_map={
-            'Total Male Enrollees': '#1f77b4',  # blue
-            'Total Female Enrollees': '#d62728'  # red
+            'Total Male Enrollees': '#084683',  # blue
+            'Total Female Enrollees': '#DE082C'  # red
         }
     )
 

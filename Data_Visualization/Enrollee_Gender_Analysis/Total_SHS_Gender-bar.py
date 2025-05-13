@@ -101,7 +101,7 @@ def update_bar_chart(selected_region, selected_grade):
             text='Label',
             title=f"Gender Distribution by Strand (All Regions) - Grade {selected_grade}",
             labels={'Percentage': 'Percentage of Students'},
-            color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'}
+            color_discrete_map={'Male': '#084683', 'Female': '#DE082C'}
         )
 
         # Calculate total enrollees and append to chart title
@@ -140,7 +140,7 @@ def update_bar_chart(selected_region, selected_grade):
             orientation='h',
             title=f"Enrollees in Region {selected_region} - Grade {selected_grade}",
             labels={'Enrollees': 'Number of Students'},
-            color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
+            color_discrete_map={'Male': '#084683', 'Female': '#DE082C'},
             text='Enrollees'
         )
 

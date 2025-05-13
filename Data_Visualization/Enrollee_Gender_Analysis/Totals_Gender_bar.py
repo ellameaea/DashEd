@@ -80,7 +80,7 @@ def gender_bar(df = None):
         barmode='stack', # Stacked bar mode
         orientation='h', # Horizontal orientation
         text='Label', # Text on bars
-        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'}, # Color mapping
+        color_discrete_map={'Male': '#084683', 'Female': '#DE082C'}, # Color mapping
         title="Gender Distribution by Category (K, ELEM, JHS, SHS)" # Title of the chart
     )
 

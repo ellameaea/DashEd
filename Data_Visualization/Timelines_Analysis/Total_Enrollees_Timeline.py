@@ -25,8 +25,9 @@ def get_enrollment_trend_figure(directory='CSV Files'):
     fig = px.line(df, x='Year', y='Total Enrollees', title='',
                   labels={'Year': 'Year', 'Total Enrollees': 'Total Enrollees'},
                   markers=True)
-    fig.update_traces(line=dict(color='blue', width=2), marker=dict(size=8))
-    fig.update_layout(title_x=0.5, height=750)
+    fig.update_traces(line=dict(color='#084683', width=2), marker=dict(size=8))
+    fig.update_layout(title_x=0.5, height=500,
+                      margin=dict(l=10, r=10, t=10, b=20))
     fig.update_xaxes(dtick=1, tickformat='.0f')
 
     return fig

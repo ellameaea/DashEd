@@ -50,7 +50,7 @@ def k_to_10(regions, selected_region):
                 orientation='h',
                 text='Label',
                 category_orders={'Grade Level': grade_order},
-                color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
+                color_discrete_map={'Male': '#084683', 'Female': '#DE082C'},
                 title="Gender Distribution by Grade Level (All Regions)"
             )
 
@@ -86,7 +86,7 @@ def k_to_10(regions, selected_region):
                 orientation='h',
                 text='Enrollees',
                 category_orders={'Grade Level': grade_order},
-                color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
+                color_discrete_map={'Male': '#084683', 'Female': '#DE082C'},
                 title=f"Enrollees in Region {selected_region} (K to G10)"
             )
 
