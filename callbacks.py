@@ -6,6 +6,7 @@ import base64
 import subprocess
 import re
 import pandas as pd
+import time
 from components.overview import create_overview_content
 from components.density  import create_density_content
 from Data_Visualization.Enrollee_Gender_Analysis.Totals_Gender_bar import gender_bar
@@ -15,9 +16,11 @@ def register_callbacks(app):
     # Tab content renderer
     @app.callback(
         Output("tab-content", "children"),
+        # Output("loading-done", "data"),
         Input("tabs", "value")
     )
     def render_content(tab_value):
+        # time.sleep(2)
         if tab_value == "overview":
             return create_overview_content()
         elif tab_value == "density":
