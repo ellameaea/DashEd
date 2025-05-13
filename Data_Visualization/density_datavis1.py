@@ -68,9 +68,9 @@ def get_school_crowding_figure():
     colors = []
     for idx in range(len(region_summary)):
         if idx == 0 or idx == len(region_summary) - 1:
-            colors.append('green')
+            colors.append('#084683')
         else:
-            colors.append('#90ee90')
+            colors.append('#0174DF')
 
     fig = go.Figure(data=[
         go.Bar(
@@ -173,13 +173,14 @@ def get_subclassification_bubble_chart():
         hover_name='Region',
         title='Comparison of Schools per Enrollee and School Subclassification Counts',
         labels={'Schools per Enrollee': 'Schools per Enrollee (%)', 'Count': 'School Subclassification Count'},
-        template='plotly'
+        template='plotly',
+        color_discrete_sequence=['#084683', '#DE082C', '#F2EC1A', '#D9D9D9']
     )
     
     fig.update_layout(
         title_font_size=15,
-        margin=dict(b=200),  # Adjust margin (lower the bottom margin)
-        height=600,  # Fix the height of the chart to ensure it doesn't overflow
+        margin=dict(b=200),
+        height=600,
     )
 
     return fig

@@ -148,7 +148,8 @@ pie_chart_total_enrollees = dcc.Graph(
                 insidetextorientation='radial',
                 textfont=dict(size=12, color='white'),
                 marker=dict(
-                    colors=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],  # Stylish color palette
+                    #colors=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],  # Stylish color palette
+                    colors=['#0174DF', '#0154A2', '#DE082C', '#F2EC1A'],
                     line=dict(color='white', width=2)  # White borders between slices
                 )
             )
@@ -195,7 +196,8 @@ app.layout = html.Div([
                     x=[total_male_enrollees, total_female_enrollees], # X-axis values (total male/female enrollees)
                     y=['Male Enrollees', 'Female Enrollees'], # Y-axis labels
                     orientation='h', # Horizontal orientation
-                    marker=dict(color=['blue', 'pink']) # Color for bars
+                    marker=dict(color=['#084683', '#DE082C']) # Color for bars
+                    
                 )
             ],
             layout=go.Layout(

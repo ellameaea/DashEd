@@ -92,7 +92,8 @@ def private_deficiency_chart():
             "Current Year Enrollees: %{customdata[1]:,.0f}<extra></extra><br>"
             "Previous Year Enrollees: %{customdata[0]:,.0f}<br>"
         ),
-        customdata=df_plot[["Previous Year Enrollees", "Current Year Enrollees"]].values
+        customdata=df_plot[["Previous Year Enrollees", "Current Year Enrollees"]].values,
+        line=dict(color='#084683')
     )
 
     fig.update_layout(

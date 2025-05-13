@@ -44,7 +44,7 @@ def gender_shs_bar(df=None):
         grouped,
         x='Percentage', y='Strand', color='Gender',
         orientation='h', barmode='stack', text='Label',
-        color_discrete_map={'Male': '#1f77b4', 'Female': '#e377c2'},
+        color_discrete_map={'Male': '#084683', 'Female': '#DE082C'}, 
         title=(
             f"Gender Distribution"
             f"<br><sub>Total Enrollees for SHS: {total_all:,}</sub>"

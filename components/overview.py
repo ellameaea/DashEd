@@ -172,7 +172,7 @@ def create_overview_content():
     card3_title = html.H3([
     html.Span(f"{number:,} ", style={
         
-        "fontSize": "70px",
+        "fontSize": "110px",
         "fontWeight": "bold",
         "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
         "WebkitBackgroundClip": "text",  
@@ -192,7 +192,7 @@ def create_overview_content():
         dcc.Graph(
             figure=get_enrollment_trend_figure(),
             config={'displayModeBar': False},
-            style={"height": "500px", "width": "800px"}
+            style={"height": "430px", "width": "800px", 'marginBottom': '20px'}
         ),
         # Dropdown to select education level for heatmap
         dcc.Dropdown(
@@ -208,7 +208,7 @@ def create_overview_content():
             ],
             value='All',
             clearable=False,
-            style={'width': '300px', 'marginBottom': '20px'}
+            style={'width': '300px', 'marginBottom': '0px'}
         ),
     
             # Heatmap (New addition)
