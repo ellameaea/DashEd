@@ -5,219 +5,265 @@ import plotly.express as px
 import json
 import os
 
-# Load the dataset (change later to let user select dataset!!)
-file_path = "CSV Files/CLEANED_SY2023_Enrollment.csv"  # Update this path if necessary
-df = pd.read_csv(file_path)
+# # Load the dataset (change later to let user select dataset!!)
+# file_path = "CSV Files/CLEANED_SY2023_Enrollment.csv"  # Update this path if necessary
+# df = pd.read_csv(file_path)
 
-# Columns containing enrollment data
-enrollment_columns = [
-    'K Male', 'K Female', 'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
-    'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female', 'G5 Male', 'G5 Female',
-    'G6 Male', 'G6 Female', 'Elem NG Male', 'Elem NG Female', 'G7 Male', 'G7 Female',
-    'G8 Male', 'G8 Female', 'G9 Male', 'G9 Female', 'G10 Male', 'G10 Female',
-    'JHS NG Male', 'JHS NG Female', 'G11 ACAD ABM Male', 'G11 ACAD ABM Female',
-    'G11 ACAD HUMSS Male', 'G11 ACAD HUMSS Female', 'G11 ACAD STEM Male', 'G11 ACAD STEM Female',
-    'G11 ACAD GAS Male', 'G11 ACAD GAS Female', 'G11 ACAD PBM Male', 'G11 ACAD PBM Female',
-    'G11 TVL Male', 'G11 TVL Female', 'G11 SPORTS Male', 'G11 SPORTS Female',
-    'G11 ARTS Male', 'G11 ARTS Female', 'G12 ACAD ABM Male', 'G12 ACAD ABM Female',
-    'G12 ACAD HUMSS Male', 'G12 ACAD HUMSS Female', 'G12 ACAD STEM Male', 'G12 ACAD STEM Female',
-    'G12 ACAD GAS Male', 'G12 ACAD GAS Female', 'G12 ACAD PBM Male', 'G12 ACAD PBM Female',
-    'G12 TVL Male', 'G12 TVL Female', 'G12 SPORTS Male', 'G12 SPORTS Female',
-    'G12 ARTS Male', 'G12 ARTS Female'
-]
+# # Columns containing enrollment data
+# enrollment_columns = [
+#     'K Male', 'K Female', 'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
+#     'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female', 'G5 Male', 'G5 Female',
+#     'G6 Male', 'G6 Female', 'Elem NG Male', 'Elem NG Female', 'G7 Male', 'G7 Female',
+#     'G8 Male', 'G8 Female', 'G9 Male', 'G9 Female', 'G10 Male', 'G10 Female',
+#     'JHS NG Male', 'JHS NG Female', 'G11 ACAD ABM Male', 'G11 ACAD ABM Female',
+#     'G11 ACAD HUMSS Male', 'G11 ACAD HUMSS Female', 'G11 ACAD STEM Male', 'G11 ACAD STEM Female',
+#     'G11 ACAD GAS Male', 'G11 ACAD GAS Female', 'G11 ACAD PBM Male', 'G11 ACAD PBM Female',
+#     'G11 TVL Male', 'G11 TVL Female', 'G11 SPORTS Male', 'G11 SPORTS Female',
+#     'G11 ARTS Male', 'G11 ARTS Female', 'G12 ACAD ABM Male', 'G12 ACAD ABM Female',
+#     'G12 ACAD HUMSS Male', 'G12 ACAD HUMSS Female', 'G12 ACAD STEM Male', 'G12 ACAD STEM Female',
+#     'G12 ACAD GAS Male', 'G12 ACAD GAS Female', 'G12 ACAD PBM Male', 'G12 ACAD PBM Female',
+#     'G12 TVL Male', 'G12 TVL Female', 'G12 SPORTS Male', 'G12 SPORTS Female',
+#     'G12 ARTS Male', 'G12 ARTS Female'
+# ]
 
-# Ensure numeric values for enrollment columns
-df[enrollment_columns] = df[enrollment_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
+# # Ensure numeric values for enrollment columns
+# df[enrollment_columns] = df[enrollment_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
 
-# Calculate total enrollees
-total_enrollees = df[enrollment_columns].sum().sum()
+# # Calculate total enrollees
+# total_enrollees = df[enrollment_columns].sum().sum()
 
-# Calculate total male and female enrollees
-male_columns = [col for col in enrollment_columns if 'Male' in col]
-female_columns = [col for col in enrollment_columns if 'Female' in col]
+# # Calculate total male and female enrollees
+# male_columns = [col for col in enrollment_columns if 'Male' in col]
+# female_columns = [col for col in enrollment_columns if 'Female' in col]
 
-total_male_enrollees = df[male_columns].sum().sum()
-total_female_enrollees = df[female_columns].sum().sum()
+# total_male_enrollees = df[male_columns].sum().sum()
+# total_female_enrollees = df[female_columns].sum().sum()
 
-# Count total number of schools
-total_schools = df.shape[0]
+# # Count total number of schools
+# total_schools = df.shape[0]
 
-# Count DepEd Managed schools
-deped_managed_schools = df[df['Sector'] == 'Public']['Sector'].count()
+# # Count DepEd Managed schools
+# deped_managed_schools = df[df['Sector'] == 'Public']['Sector'].count()
 
-# Dictionary for combined levels
-combined_levels = {
-    'Kindergarten': [
-        'K Male', 'K Female'
-    ],
-    'ELEM': [
-        'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
-        'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female', 'G5 Male', 'G5 Female',
-        'G6 Male', 'G6 Female', 'Elem NG Male', 'Elem NG Female'
-    ],
-    'JHS': [
-        'G7 Male', 'G7 Female', 'G8 Male', 'G8 Female', 'G9 Male', 'G9 Female',
-        'G10 Male', 'G10 Female', 'JHS NG Male', 'JHS NG Female'
-    ],
-    'SHS': [
-        'G11 ACAD ABM Male', 'G11 ACAD ABM Female', 'G11 ACAD HUMSS Male', 'G11 ACAD HUMSS Female',
-        'G11 ACAD STEM Male', 'G11 ACAD STEM Female', 'G11 ACAD GAS Male', 'G11 ACAD GAS Female',
-        'G11 ACAD PBM Male', 'G11 ACAD PBM Female', 'G11 TVL Male', 'G11 TVL Female',
-        'G11 SPORTS Male', 'G11 SPORTS Female', 'G11 ARTS Male', 'G11 ARTS Female',
-        'G12 ACAD ABM Male', 'G12 ACAD ABM Female', 'G12 ACAD HUMSS Male', 'G12 ACAD HUMSS Female',
-        'G12 ACAD STEM Male', 'G12 ACAD STEM Female', 'G12 ACAD GAS Male', 'G12 ACAD GAS Female',
-        'G12 ACAD PBM Male', 'G12 ACAD PBM Female', 'G12 TVL Male', 'G12 TVL Female',
-        'G12 SPORTS Male', 'G12 SPORTS Female', 'G12 ARTS Male', 'G12 ARTS Female'
-    ]
-}
+# # Dictionary for combined levels
+# combined_levels = {
+#     'Kindergarten': [
+#         'K Male', 'K Female'
+#     ],
+#     'ELEM': [
+#         'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
+#         'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female', 'G5 Male', 'G5 Female',
+#         'G6 Male', 'G6 Female', 'Elem NG Male', 'Elem NG Female'
+#     ],
+#     'JHS': [
+#         'G7 Male', 'G7 Female', 'G8 Male', 'G8 Female', 'G9 Male', 'G9 Female',
+#         'G10 Male', 'G10 Female', 'JHS NG Male', 'JHS NG Female'
+#     ],
+#     'SHS': [
+#         'G11 ACAD ABM Male', 'G11 ACAD ABM Female', 'G11 ACAD HUMSS Male', 'G11 ACAD HUMSS Female',
+#         'G11 ACAD STEM Male', 'G11 ACAD STEM Female', 'G11 ACAD GAS Male', 'G11 ACAD GAS Female',
+#         'G11 ACAD PBM Male', 'G11 ACAD PBM Female', 'G11 TVL Male', 'G11 TVL Female',
+#         'G11 SPORTS Male', 'G11 SPORTS Female', 'G11 ARTS Male', 'G11 ARTS Female',
+#         'G12 ACAD ABM Male', 'G12 ACAD ABM Female', 'G12 ACAD HUMSS Male', 'G12 ACAD HUMSS Female',
+#         'G12 ACAD STEM Male', 'G12 ACAD STEM Female', 'G12 ACAD GAS Male', 'G12 ACAD GAS Female',
+#         'G12 ACAD PBM Male', 'G12 ACAD PBM Female', 'G12 TVL Male', 'G12 TVL Female',
+#         'G12 SPORTS Male', 'G12 SPORTS Female', 'G12 ARTS Male', 'G12 ARTS Female'
+#     ]
+# }
 
-# Calculate total enrollees for each combined level
-combined_totals = {level: df[columns].sum().sum() for level, columns in combined_levels.items()}
+# # Calculate total enrollees for each combined level
+# combined_totals = {level: df[columns].sum().sum() for level, columns in combined_levels.items()}
 
-# Calculate total enrollees per region
-region_enrollment = df.groupby('Region')[enrollment_columns].sum().sum(axis=1).reset_index()
-region_enrollment.columns = ['Region', 'Total_Enrollees']
+# # Calculate total enrollees per region
+# region_enrollment = df.groupby('Region')[enrollment_columns].sum().sum(axis=1).reset_index()
+# region_enrollment.columns = ['Region', 'Total_Enrollees']
 
-# CODE FOR HEATMAP!! starts at line 82 and ends in line 128 remove as needed
-# use Overview-heatmap.py for the heatmap code
+# # CODE FOR HEATMAP!! starts at line 82 and ends in line 128 remove as needed
+# # use Overview-heatmap.py for the heatmap code
 
-# Aggregate total per region by level
-region_level_totals = df.groupby('Region').agg({
-    **{col: 'sum' for col in enrollment_columns}
-}).reset_index()
+# # Aggregate total per region by level
+# region_level_totals = df.groupby('Region').agg({
+#     **{col: 'sum' for col in enrollment_columns}
+# }).reset_index()
 
-# Add level-based totals per region
-region_heatmap_data = pd.DataFrame()
-region_heatmap_data['Region'] = region_level_totals['Region']
+# # Add level-based totals per region
+# region_heatmap_data = pd.DataFrame()
+# region_heatmap_data['Region'] = region_level_totals['Region']
 
-# Calculate per-level totals per region
-for level, columns in combined_levels.items():
-    region_heatmap_data[level] = region_level_totals[columns].sum(axis=1)
+# # Calculate per-level totals per region
+# for level, columns in combined_levels.items():
+#     region_heatmap_data[level] = region_level_totals[columns].sum(axis=1)
 
-# Subtotal per region
-region_heatmap_data['Subtotal'] = region_heatmap_data[
-    ['Kindergarten', 'ELEM', 'JHS', 'SHS']
-].sum(axis=1)
+# # Subtotal per region
+# region_heatmap_data['Subtotal'] = region_heatmap_data[
+#     ['Kindergarten', 'ELEM', 'JHS', 'SHS']
+# ].sum(axis=1)
 
-# Add Grand Total Row
-grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']].sum()
-grand_total_row = pd.DataFrame([['Grand Total'] + grand_totals.tolist()], columns=region_heatmap_data.columns)
-region_heatmap_data = pd.concat([region_heatmap_data, grand_total_row], ignore_index=True)
+# # Add Grand Total Row
+# grand_totals = region_heatmap_data[['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal']].sum()
+# grand_total_row = pd.DataFrame([['Grand Total'] + grand_totals.tolist()], columns=region_heatmap_data.columns)
+# region_heatmap_data = pd.concat([region_heatmap_data, grand_total_row], ignore_index=True)
 
-# Create heatmap figure
-heatmap_fig = px.imshow(
-    region_heatmap_data.set_index('Region'),
-    labels=dict(x="Level", y="Region", color="Enrollees"),
-    x=['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal'],
-    y=region_heatmap_data['Region'],
-    color_continuous_scale="blues",
-    text_auto=True,
-    aspect="auto"
-)
+# # Create heatmap figure
+# heatmap_fig = px.imshow(
+#     region_heatmap_data.set_index('Region'),
+#     labels=dict(x="Level", y="Region", color="Enrollees"),
+#     x=['Kindergarten', 'ELEM', 'JHS', 'SHS', 'Subtotal'],
+#     y=region_heatmap_data['Region'],
+#     color_continuous_scale="blues",
+#     text_auto=True,
+#     aspect="auto"
+# )
 
-heatmap_fig.update_layout(
-    title="Enrollment Heatmap by Region and Level (with Totals)",
-    xaxis=dict(
-        title="Education Level",
-        side="top"  # Place x-axis labels at the top
-    ),
-    yaxis_title="Region",
-    height=800,
-    margin=dict(l=100, r=50, t=100, b=100),
-    font=dict(size=12)
-)
+# heatmap_fig.update_layout(
+#     title="Enrollment Heatmap by Region and Level (with Totals)",
+#     xaxis=dict(
+#         title="Education Level",
+#         side="top"  # Place x-axis labels at the top
+#     ),
+#     yaxis_title="Region",
+#     height=800,
+#     margin=dict(l=100, r=50, t=100, b=100),
+#     font=dict(size=12)
+# )
 
-# Display the results
-print("===== Enrollment Summary =====")
-print(f"Total Enrollees (K to G12, including strands): {int(total_enrollees):,}")
-print(f"Total Male Enrollees: {int(total_male_enrollees):,}")
-print(f"Total Female Enrollees: {int(total_female_enrollees):,}")
-print(f"Total Number of Schools: {total_schools:,}")
-print(f"Number of DepEd Managed Schools: {deped_managed_schools:,}")
+# # Display the results
+# print("===== Enrollment Summary =====")
+# print(f"Total Enrollees (K to G12, including strands): {int(total_enrollees):,}")
+# print(f"Total Male Enrollees: {int(total_male_enrollees):,}")
+# print(f"Total Female Enrollees: {int(total_female_enrollees):,}")
+# print(f"Total Number of Schools: {total_schools:,}")
+# print(f"Number of DepEd Managed Schools: {deped_managed_schools:,}")
 
 
-pie_chart_total_enrollees = dcc.Graph(
-    id='combined-levels-pie',
-    figure=go.Figure(
-        data=[
-            go.Pie(
-                labels=list(combined_totals.keys()),
-                values=list(combined_totals.values()),
-                hole=0.55,
-                textinfo='label+percent',  # Show label and percent inside
-                insidetextorientation='radial',
-                textfont=dict(size=12, color='white'),
-                marker=dict(
-                    #colors=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],  # Stylish color palette
-                    colors=['#0174DF', '#0154A2', '#DE082C', '#F2EC1A'],
-                    line=dict(color='white', width=2)  # White borders between slices
-                )
-            )
+import pandas as pd
+import plotly.graph_objects as go
+
+# ——— Pie Chart: Total Enrollees by Level ———
+def pie_chart_total_enrollees(df: pd.DataFrame) -> go.Figure:
+    """
+    Builds a donut‐style pie chart showing total enrollees
+    broken down by Kindergarten, ELEM, JHS, and SHS levels.
+    Expects a DataFrame with columns matching the combined_levels dict.
+    """
+    # Define which columns belong to each level
+    combined_levels = {
+        'Kindergarten': ['K Male', 'K Female'],
+        'ELEM': [
+            'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
+            'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female',
+            'G5 Male', 'G5 Female', 'G6 Male', 'G6 Female',
+            'Elem NG Male', 'Elem NG Female'
         ],
-        layout=go.Layout(
-            title=dict(
-                font=dict(
-                    family="Segoe UI, sans-serif",
-                    size=20,
-                    color="#333333"
-                ),
-                x=0.5,  # Center the title
-                xanchor='center'
-            ),
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=-0.1,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=12)
-            ),
-            height=400,
-            margin=dict(t=60, b=40, l=30, r=30)
-        )
-    ),
-)
-    
+        'JHS': [
+            'G7 Male', 'G7 Female', 'G8 Male', 'G8 Female',
+            'G9 Male', 'G9 Female', 'G10 Male', 'G10 Female',
+            'JHS NG Male', 'JHS NG Female'
+        ],
+        'SHS': [
+            'G11 ACAD ABM Male', 'G11 ACAD ABM Female',
+            'G11 ACAD HUMSS Male', 'G11 ACAD HUMSS Female',
+            'G11 ACAD STEM Male', 'G11 ACAD STEM Female',
+            'G11 ACAD GAS Male', 'G11 ACAD GAS Female',
+            'G11 ACAD PBM Male', 'G11 ACAD PBM Female',
+            'G11 TVL Male', 'G11 TVL Female',
+            'G11 SPORTS Male', 'G11 SPORTS Female',
+            'G11 ARTS Male', 'G11 ARTS Female',
+            'G12 ACAD ABM Male', 'G12 ACAD ABM Female',
+            'G12 ACAD HUMSS Male', 'G12 ACAD HUMSS Female',
+            'G12 ACAD STEM Male', 'G12 ACAD STEM Female',
+            'G12 ACAD GAS Male', 'G12 ACAD GAS Female',
+            'G12 ACAD PBM Male', 'G12 ACAD PBM Female',
+            'G12 TVL Male', 'G12 TVL Female',
+            'G12 SPORTS Male', 'G12 SPORTS Female',
+            'G12 ARTS Male', 'G12 ARTS Female'
+        ]
+    }
 
+    # Ensure numeric and fill gaps
+    for cols in combined_levels.values():
+        df[cols] = df[cols].apply(pd.to_numeric, errors='coerce').fillna(0)
 
-# Create the Dash app
-app = Dash(__name__)
+    # Compute sums per level
+    combined_totals = {
+        level: df[cols].sum().sum()
+        for level, cols in combined_levels.items()
+    }
+    total_all = sum(combined_totals.values())
 
-# Layout for the Dash app
-app.layout = html.Div([
-    html.H1("Enrollment Summary", style={'textAlign': 'center'}),
-    
-    # Single horizontal bar graph comparing Male vs Female Enrollees
-    dcc.Graph(
-        id='male-vs-female-bar', # ID for the graph
-        figure=go.Figure(
-            data=[
-                go.Bar(
-                    x=[total_male_enrollees, total_female_enrollees], # X-axis values (total male/female enrollees)
-                    y=['Male Enrollees', 'Female Enrollees'], # Y-axis labels
-                    orientation='h', # Horizontal orientation
-                    marker=dict(color=['#084683', '#DE082C']) # Color for bars
-                    
-                )
-            ],
-            layout=go.Layout(
-                title="Male vs Female Enrollees",
-                xaxis=dict(title="Number of Enrollees"), # X-axis title
-                yaxis=dict(title=""), # Y-axis title
-                height=400 # Height of the graph
-            )
-        )
-    ),
-    # Pie chart for total enrollees by combined levels
-    pie_chart_total_enrollees,
-    
-    dcc.Graph(
-        id='region-level-heatmap',
-        figure=heatmap_fig
+    # Build the figure
+    fig = go.Figure(
+        data=[go.Pie(
+            labels=list(combined_totals.keys()),
+            values=list(combined_totals.values()),
+            hole=0.55,
+            textinfo='label+percent',
+            marker=dict(colors=['#0174DF','#0154A2','#DE082C','#F2EC1A'])
+        )]
     )
 
-])
+    fig.update_layout(
+        title={
+            'text': (
+                "Total Enrollees by Level"
+                f"<br><sub>Total: {total_all:,}</sub>"
+            ),
+            'x': 0.5,                   # center
+            'y': 1,                     # top of plot
+            'xanchor': 'center',
+            'yanchor': 'bottom',
+            'pad': {'t': 20}            # 20px padding above title
+        },
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.1,
+            xanchor="center", x=0.5, font=dict(size=12)
+        ),
+        height=400,
+        margin=dict(t=80, b=40, l=30, r=30)  # 80px top margin
+    )
 
-# Run the Dash app
-if __name__ == '__main__':
-    app.run(port=8051, debug=True)
+    return fig
+
+
+
+# # Create the Dash app
+# app = Dash(__name__)
+
+# # Layout for the Dash app
+# app.layout = html.Div([
+#     html.H1("Enrollment Summary", style={'textAlign': 'center'}),
+    
+#     # Single horizontal bar graph comparing Male vs Female Enrollees
+#     dcc.Graph(
+#         id='male-vs-female-bar', # ID for the graph
+#         figure=go.Figure(
+#             data=[
+#                 go.Bar(
+#                     x=[total_male_enrollees, total_female_enrollees], # X-axis values (total male/female enrollees)
+#                     y=['Male Enrollees', 'Female Enrollees'], # Y-axis labels
+#                     orientation='h', # Horizontal orientation
+#                     marker=dict(color=['#084683', '#DE082C']) # Color for bars
+                    
+#                 )
+#             ],
+#             layout=go.Layout(
+#                 title="Male vs Female Enrollees",
+#                 xaxis=dict(title="Number of Enrollees"), # X-axis title
+#                 yaxis=dict(title=""), # Y-axis title
+#                 height=400 # Height of the graph
+#             )
+#         )
+#     ),
+#     # Pie chart for total enrollees by combined levels
+#     pie_chart_total_enrollees,
+    
+#     dcc.Graph(
+#         id='region-level-heatmap',
+#         figure=heatmap_fig
+#     )
+
+# ])
+
+# # Run the Dash app
+# if __name__ == '__main__':
+#     app.run(port=8051, debug=True)

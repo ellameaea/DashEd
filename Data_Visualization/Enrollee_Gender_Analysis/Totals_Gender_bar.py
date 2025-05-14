@@ -88,7 +88,7 @@ def gender_bar(df = None):
     fig.update_layout(
        title={
             'text': f"Gender Distribution by Category (K, ELEM, JHS, SHS)<br><sub>Total Enrollees: {total_all:,}</sub>", # Title with total enrollees
-            'x': 0.5 # Center the title
+            'x': 0.5, # Center the title
         },
         xaxis=dict( 
             title='Percentage', # X-axis title
@@ -96,9 +96,9 @@ def gender_bar(df = None):
             range=[0, 100] # Range for X-axis
         ),
         yaxis_title='Category', # Y-axis title
-        height=400, # Height of the chart
+        height=380, # Height of the chart
         legend_title='Gender', # Legend title
-        margin=dict(l=20, r=20, t=60, b=60) # Margin settings
+        margin=dict(l=20, r=20, t=60, b=0) # Margin settings
     )
     fig.update_traces(textposition='inside', insidetextanchor='middle') # Position labels inside bars
 

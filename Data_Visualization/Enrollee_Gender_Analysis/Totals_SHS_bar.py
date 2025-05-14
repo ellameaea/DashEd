@@ -55,9 +55,9 @@ def gender_shs_bar(df=None):
     fig.update_layout(
         xaxis=dict(title='Percentage', ticksuffix='%', range=[0, 100]),
         yaxis_title='Strand',
-        height=400,
+        height=385,
         legend_title='Gender',
-        margin=dict(l=20, r=20, t=60, b=20)
+        margin=dict(l=20, r=20, t=40, b=0)
     )
     fig.update_traces(textposition='inside', insidetextanchor='middle')
 

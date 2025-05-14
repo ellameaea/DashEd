@@ -1,10 +1,15 @@
 from dash import dcc, html
+import os
 
 def create_tabs():
+    # List all CSV files for selection
+    options = [
+        {"label": fn, "value": fn}
+        for fn in os.listdir("CSV Files") if fn.endswith(".csv")
+    ]
+
     return html.Div(
-        style={
-            "padding": "0 80px",  # Adjusted padding to align with the main content
-        },
+        style={"padding": "0 80px"},  # Adjusted padding to align with the main content
         children=[
             html.Div(
                 style={
@@ -13,13 +18,14 @@ def create_tabs():
                     "alignItems": "flex-end",
                 },
                 children=[
+                    # Main tab selector with custom styles
                     dcc.Tabs(
-                        id='tabs',
-                        value='overview',
+                        id="tabs",
+                        value="overview",
                         children=[
                             dcc.Tab(
-                                label='Overview',
-                                value='overview',
+                                label="Overview",
+                                value="overview",
                                 style={
                                     "fontFamily": "Montserrat, sans-serif",
                                     "fontSize": "16px",
@@ -29,12 +35,8 @@ def create_tabs():
                                     "borderBottom": "3px solid transparent",
                                     "boxShadow": "none",
                                     "fontWeight": "normal",
-                                    "padding": "6px 0",
-                                    "cursor": "pointer",
+                                    "padding": "6px 0 12px 0",
                                     "lineHeight": "1.5",
-                                    "position": "relative",
-                                    "zIndex": "1",
-                                    "paddingBottom": "12px"
                                 },
                                 selected_style={
                                     "fontWeight": "bold",
@@ -46,12 +48,12 @@ def create_tabs():
                                     "padding": "6px 0 12px 0",
                                     "lineHeight": "1.5",
                                     "position": "relative",
-                                    "zIndex": "1"
-                                }
+                                    "zIndex": "1",
+                                },
                             ),
                             dcc.Tab(
-                                label='Density',
-                                value='density',
+                                label="Density",
+                                value="density",
                                 style={
                                     "fontFamily": "Montserrat, sans-serif",
                                     "fontSize": "16px",
@@ -61,12 +63,8 @@ def create_tabs():
                                     "borderBottom": "3px solid transparent",
                                     "boxShadow": "none",
                                     "fontWeight": "normal",
-                                    "padding": "6px 0",
-                                    "cursor": "pointer",
+                                    "padding": "6px 0 12px 0",
                                     "lineHeight": "1.5",
-                                    "position": "relative",
-                                    "zIndex": "1",
-                                    "paddingBottom": "12px"
                                 },
                                 selected_style={
                                     "fontWeight": "bold",
@@ -78,48 +76,58 @@ def create_tabs():
                                     "padding": "6px 0 12px 0",
                                     "lineHeight": "1.5",
                                     "position": "relative",
-                                    "zIndex": "1"
-                                }
+                                    "zIndex": "1",
+                                },
                             ),
                         ],
-                        style={"display": "flex", "gap": "24px"}
+                        style={"display": "flex", "gap": "24px"},
                     ),
+
+                    # Dataset controls: dropdown for selection and upload trigger
                     html.Div(
+                        style={"display": "flex", "alignItems": "center", "paddingBottom": "12px"},
                         children=[
-                            html.Button("Select Data Set", style={
-                                "fontFamily": "Montserrat, sans-serif",
-                                "fontSize": "14px",
-                                "padding": "6px 16px",
-                                "backgroundColor": "transparent",
-                                "color": "#084683",
-                                "border": "2px solid #DE082C",
-                                "borderRadius": "999px",
-                                "cursor": "pointer",
-                                "marginRight": "10px",
-                            }),
-                            html.Button("+ Import Data Set", style={
-                                "fontFamily": "Montserrat, sans-serif",
-                                "fontSize": "14px",
-                                "padding": "6px 16px",
-                                "backgroundColor": "transparent",
-                                "color": "#084683",
-                                "border": "2px solid #DE082C",
-                                "borderRadius": "999px",
-                                "cursor": "pointer",
-                            }),
+                            dcc.Dropdown(
+                                id="dataset-select",
+                                options=options,
+                                value="CLEANED_SY2023_Enrollment.csv",
+                                clearable=False,
+                                style={"width": "200px", "marginRight": "16px"},
+                            ),
+                            html.Button(
+                                "+ Import Data Set",  # Matches callback ID expectations
+                                id="show-upload-btn",
+                                n_clicks=0,
+                                style={
+                                    "fontFamily": "Montserrat, sans-serif",
+                                    "fontSize": "14px",
+                                    "padding": "6px 16px",
+                                    "backgroundColor": "transparent",
+                                    "color": "#084683",
+                                    "border": "2px solid #DE082C",
+                                    "borderRadius": "999px",
+                                    "cursor": "pointer",
+                                    "marginRight": "10px",
+                                },
+                            ),
+                            html.Div(
+                                id="upload-container",
+                                style={"marginLeft": "16px"},
+                            ),
                         ],
-                        style={"display": "flex", "alignItems": "center", "paddingBottom": "12px"}
-                    )
-                ]
+                    ),
+                ],
             ),
+
+            # Underline separator
             html.Div(
                 style={
                     "width": "100%",
                     "borderBottom": "1px solid #ccc",
-                    "marginTop": "0",  
+                    "marginTop": "0",
                     "position": "relative",
-                    "zIndex": "0"
-                }
-            )
-        ]
+                    "zIndex": "0",
+                },
+            ),
+        ],
     )

@@ -1,4 +1,3 @@
-
 import dash
 import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output
@@ -9,14 +8,8 @@ from components.header import create_header
 from components.tabs import create_tabs
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Indiv_private_deficiency import indiv_private_deficiency_chart
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_private import private_deficiency_chart
-
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_public import public_deficiency_chart
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Indiv_public_deficiency import indiv_public_deficiency_chart
-
-
-# from flask_caching import Cache
-
-# cache = Cache(app.server, config={"CACHE_TYPE": "simple"})
 
 # Initialize the app
 app = dash.Dash(
@@ -26,45 +19,45 @@ app = dash.Dash(
     suppress_callback_exceptions=True
 )
 
-import pandas as pd
-
-
+# App layout
 app.layout = html.Div(
     children=[
-        create_header(),  # ✅ Always visible
+        create_header(),  # Always visible header
 
-        dcc.Store(id="stored-data", data=pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv").to_dict('records')),
-
-        html.Div(id="menu-output", style={"margin-top": "20px", "font-size": "18px"}),
-
-        dcc.Loading(
-            id="global-loading",
-            type="circle",
-            color="#084683",
-            children=html.Div([
-                create_tabs(),
-                html.Div(id="tab-content"),
-            ]),
-            style={
-                "position": "fixed",
-                "top": "0",
-                "left": "0",
-                "width": "100vw",
-                "height": "100vh",
-                "display": "flex",
-                "justifyContent": "center",
-                "alignItems": "center",
-                "backgroundColor": "rgba(255,255,255,0.5)",
-                "zIndex": "9999"
-            }
+        # Store holding the active dataset records
+        dcc.Store(
+            id="stored-data",
+            data=pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv").to_dict('records')
         ),
+        # Trigger for re-loading after processing uploads
+        dcc.Store(
+            id="processing-trigger",
+            data=None
+        ),
+        # Status messages from file upload processing
+        html.Div(
+            id="upload-status",
+            style={"margin": "10px 80px", "color": "#084683"}
+        ),
+        # (Optional) existing menu output area
+        html.Div(
+            id="menu-output",
+            style={"margin-top": "20px", "font-size": "18px"}
+        ),
+
+        # Main content area with tabs, wrapped in a spinner
+        html.Div([
+            create_tabs(),
+            html.Div(id="tab-content"),
+        ], style={"marginTop": "20px"}),
     ],
     style={"margin": "0", "padding": "0", "background": "#f5f5f5"}
 )
 
-# Register callbacks
+# Register custom callbacks defined in callbacks.py
 register_callbacks(app)
 
+# Density tab: update region-level heatmap
 @app.callback(
     Output('region-level-heatmap', 'figure'),
     Input('level-dropdown', 'value')
@@ -73,7 +66,7 @@ def update_region_heatmap_figure(selected_level):
     from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
     return get_region_heatmap_figure(selected_level)
 
-# For Density Dropdown (Private)
+# Density tab: private deficiency graphs
 @app.callback(
     Output('private-deficiency-graph', 'figure'),
     Input('private-deficiency-dropdown', 'value')
@@ -83,7 +76,7 @@ def update_private_deficiency_graph(selected_option):
         return indiv_private_deficiency_chart()
     return private_deficiency_chart()
 
-# For Density Dropdown (Public)
+# Density tab: public deficiency graphs
 @app.callback(
     Output('public-deficiency-graph', 'figure'),
     Input('public-deficiency-dropdown', 'value')
@@ -91,9 +84,7 @@ def update_private_deficiency_graph(selected_option):
 def update_public_deficiency_chart(selected_option):
     if selected_option == 'total':
         return public_deficiency_chart()
-    else:
-        return indiv_public_deficiency_chart()
-
+    return indiv_public_deficiency_chart()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port = 8051, debug=True)
