@@ -57,14 +57,14 @@ app.layout = html.Div(
 # Register custom callbacks defined in callbacks.py
 register_callbacks(app)
 
-# Density tab: update region-level heatmap
-@app.callback(
-    Output('region-level-heatmap', 'figure'),
-    Input('level-dropdown', 'value')
-)
-def update_region_heatmap_figure(selected_level):
-    from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
-    return get_region_heatmap_figure(selected_level)
+# # Density tab: update region-level heatmap
+# @app.callback(
+#     Output('region-level-heatmap', 'figure'),
+#     Input('level-dropdown', 'value')
+# )
+# def update_region_heatmap_figure(selected_level):
+#     from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
+#     return get_region_heatmap_figure(selected_level)
 
 # Density tab: private deficiency graphs
 @app.callback(

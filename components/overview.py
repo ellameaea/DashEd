@@ -99,9 +99,13 @@ def create_stacked_cards(cards_list):
 def create_overview_content():
     pie_card = create_visualization_card(
         "Total Enrollees by Level",
-        dcc.Graph(id="combined-levels-pie"),
+        dcc.Loading(
+            children=dcc.Graph(id="combined-levels-pie"),
+            type="circle",
+            style={"height": "100%"}  # ensures the spinner fills the card
+        ),
         height=450,
-    )
+)
 
     # 2) Combined card for trend and interactive components
     # Create dropdowns
@@ -200,11 +204,15 @@ def create_overview_content():
         ),
     
             # Heatmap (New addition)
-        dcc.Graph(
-            id='region-level-heatmap',
-            figure=get_region_heatmap_figure(selected_level='All'),  # Placeholder for heatmap
-            config={'displayModeBar': False},
-            style={"height": "400px", "width": "800px"}
+    # Heatmap (with spinner, driven by callback)
+        dcc.Loading(
+            dcc.Graph(
+                id='region-level-heatmap',
+                config={'displayModeBar': False},
+                style={"height": "100%", "width": "100%"}
+            ),
+            type='circle',
+            style={"height": "400px", "width": "800px", "display": "inline-block"}
         )
     ], style={'marginTop': '20px'})
 

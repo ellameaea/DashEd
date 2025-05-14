@@ -2,6 +2,7 @@ from dash import Input, Output, State, html, dcc, callback_context
 from dash.exceptions import PreventUpdate
 import os, base64, subprocess, re, pandas as pd
 import pandas as pd
+import time
 from components.overview import create_overview_content
 from components.density import create_density_content
 from Data_Visualization.Enrollee_Gender_Analysis.Totals_Gender_bar import gender_bar
@@ -151,11 +152,14 @@ def register_callbacks(app):
     def update_trend(_):
         return enrollment_trend_by_gender
 
-    #  ❏ Region heatmap
-    @app.callback(Output("region-heatmap","figure"),
-                Input("level-dropdown","value"))
-    def update_heatmap(level):
-        return get_region_heatmap_figure(selected_level=level)
+    @app.callback(
+        Output("region-level-heatmap", "figure"),
+        Input("stored-data",    "data"),
+        Input("level-dropdown", "value")
+    )
+    def update_region_heatmap(stored_data, level):
+        df = pd.DataFrame(stored_data or [])
+        return get_region_heatmap_figure(df, selected_level=level)
 
     #  8. Auto-refresh region dropdown options when data changes
     @app.callback(
@@ -172,6 +176,7 @@ def register_callbacks(app):
         Input("stored-data","data")
     )
     def update_pie(data):
+        time.sleep(0.3)
         df = pd.DataFrame(data or [])
         return pie_chart_total_enrollees(df)
 
