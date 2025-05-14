@@ -179,4 +179,3 @@ def register_callbacks(app):
         time.sleep(0.3)
         df = pd.DataFrame(data or [])
         return pie_chart_total_enrollees(df)
-
