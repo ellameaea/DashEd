@@ -112,7 +112,8 @@ def indiv_private_deficiency_chart():
         ))
 
     fig.update_layout(
-        title="Enrollment Deficiency Ratio for Private + PSO Schools by Education Level",
+        title={"text":"Enrollment Deficiency Ratio for Private + PSO Schools by Education Level",
+               "font":{"size":12}},
         xaxis_title="School Year",
         yaxis_title="Deficiency Ratio (%)",
         yaxis=dict(range=[0, 100]),

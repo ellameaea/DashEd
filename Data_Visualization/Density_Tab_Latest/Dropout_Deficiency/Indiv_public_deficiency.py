@@ -114,7 +114,8 @@ def indiv_public_deficiency_chart():
 
 
     fig.update_layout(
-        title="Enrollment Deficiency Ratio for Public + SUCs/LUCs Schools by Education Level",
+        title={"text":"Enrollment Deficiency Ratio for Public + SUCs/LUCs Schools by Education Level",
+               "font":{"size":10}},
         xaxis_title="School Year",
         yaxis_title="Deficiency Ratio (%)",
         yaxis=dict(range=[0, 100]),

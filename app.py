@@ -28,7 +28,6 @@ app = dash.Dash(
 
 import pandas as pd
 
-
 app.layout = html.Div(
     children=[
         create_header(),  # ✅ Always visible
@@ -61,6 +60,7 @@ app.layout = html.Div(
     ],
     style={"margin": "0", "padding": "0", "background": "#f5f5f5"}
 )
+
 
 # Register callbacks
 register_callbacks(app)
