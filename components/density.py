@@ -76,7 +76,7 @@ def create_density_content():
             id='private-pie-chart',
             figure=private_pie_chart(),
             config={'responsive': True},
-            style={"height": "250px", "width": "100%"} 
+            style={"height": "240px", "width": "100%"} 
         ), style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
         style={"marginBottom": "20px"}  
     ),
@@ -85,7 +85,7 @@ def create_density_content():
         "color": "#DE082C",
         "textAlign": "left",
         "fontSize": "20px",
-        "marginBottom": "0px"
+        "marginBottom": "10px"
     }),
 
     dcc.Dropdown(
@@ -134,7 +134,7 @@ def create_density_content():
             id='public-pie-chart',
             figure=public_pie_chart(),
             config={'responsive': True},
-            style={"height": "250px", "width": "100%"}  
+            style={"height": "240px", "width": "100%"}  
         ),style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
         style={"marginBottom": "20px"}
     ),
@@ -143,7 +143,7 @@ def create_density_content():
         "color": "#DE082C",
         "textAlign": "left",
         "fontSize": "20px",
-        "marginBottom": "0px"
+        "marginBottom": "10px"
     }),
 
     dcc.Dropdown(
