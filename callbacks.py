@@ -10,6 +10,7 @@ from Data_Visualization.Enrollee_Gender_Analysis.Totals_SHS_bar import gender_sh
 from Data_Visualization.Overview_output import pie_chart_total_enrollees
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
 from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
+from Data_Visualization.phmap import phmap
 
 def register_callbacks(app):
     # 1. Render page content based on selected tab
@@ -85,19 +86,6 @@ def register_callbacks(app):
         files = [f for f in os.listdir("CSV Files") if f.endswith(".csv")]
         return [{"label": f, "value": f} for f in files]
 
-    # 5. Update overview graph based on stored-data and filters
-    @app.callback(
-        Output("overview-graph", "figure"),
-        Input("overview-chart-dropdown", "value"),
-        Input("overview-region-dropdown", "value"),
-        State("stored-data", "data")
-    )
-    def update_overview(chart_type, region, stored_data):
-        df = pd.DataFrame(stored_data or [])
-        if region and region != "All Regions":
-            df = df[df.Region == region]
-        return gender_shs_bar(df) if chart_type == "shs" else gender_bar(df)
-
     # 6. Show which dataset is active, with row/column counts
     @app.callback(
         Output("dataset-info", "children"),
@@ -145,11 +133,26 @@ def register_callbacks(app):
     def update_pie(_):
         return pie_chart_total_enrollees.figure
 
+    # Gender Distribution Analysis
+    @app.callback(
+        Output("overview-graph", "figure"),
+        Input("overview-chart-dropdown", "value"),
+        Input("overview-region-dropdown",  "value"),
+        Input("stored-data",               "data"),    # ← updated!
+    )
+    def update_overview(chart_type, region, stored_data):
+        time.sleep(0.3)
+        df = pd.DataFrame(stored_data or [])
+        if region and region != "All Regions":
+            df = df[df.Region == region]
+        return (gender_shs_bar(df) if chart_type == "shs"
+                else gender_bar(df))
 
     #  ❏ Trend chart
     @app.callback(Output("trend-chart","figure"), 
                   Input("stored-data","data"))
     def update_trend(_):
+        time.sleep(0.3)
         return enrollment_trend_by_gender
 
     @app.callback(
@@ -158,8 +161,19 @@ def register_callbacks(app):
         Input("level-dropdown", "value")
     )
     def update_region_heatmap(stored_data, level):
+        time.sleep(0.3)
         df = pd.DataFrame(stored_data or [])
         return get_region_heatmap_figure(df, selected_level=level)
+    
+    #PH MAP
+    @app.callback(
+    Output("ph-map", "figure"),
+    Input("stored-data", "data")
+)
+    def update_ph_map(stored_data):
+        time.sleep(0.3)
+        df = pd.DataFrame(stored_data or [])
+        return phmap(df)
 
     #  8. Auto-refresh region dropdown options when data changes
     @app.callback(

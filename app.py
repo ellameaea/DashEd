@@ -67,6 +67,7 @@ register_callbacks(app)
 #     return get_region_heatmap_figure(selected_level)
 
 # Density tab: private deficiency graphs
+
 @app.callback(
     Output('private-deficiency-graph', 'figure'),
     Input('private-deficiency-dropdown', 'value')

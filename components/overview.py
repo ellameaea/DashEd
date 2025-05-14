@@ -97,6 +97,7 @@ def create_stacked_cards(cards_list):
 
 # ——— MAIN: Overview Content ———
 def create_overview_content():
+    #1) Total Enrollees by Level
     pie_card = create_visualization_card(
         "Total Enrollees by Level",
         dcc.Loading(
@@ -107,7 +108,7 @@ def create_overview_content():
         height=450,
 )
 
-    # 2) Combined card for trend and interactive components
+    # 2) Combined card for Enrollment Sex Distribution and Gender Distribution Analysis
     # Create dropdowns
     chart_select = dcc.Dropdown(
         id="overview-chart-dropdown",
@@ -126,7 +127,7 @@ def create_overview_content():
         style={"fontFamily":"Google Sans, sans--serif","fontSize":"14px","width":"200px","display":"inline-block","fontWeight":"Normal", "color":"black"}
     )
     
-    combined_panel = html.Div([
+    combined_panel = html.Div([ 
         html.Div([
             html.H4("Enrollment Sex Distribution", style={
                 "fontFamily": "Google Sans, sans-serif",
@@ -153,13 +154,13 @@ def create_overview_content():
     combined_card = create_visualization_card(
         combined_panel,
         "",
-        height=1025  # Match the height of the big card
+        height=1025
     )
 
-    # 3) Stack pie and combined card
+    # 3) RIGHT COLUMN // OVERVIEW
     stacked_visualization = create_stacked_cards([pie_card, combined_card])
 
-    # 4) Big placeholder card
+    # 4) LEFT COLUMN // OVERVIEW
     number= get_latest_total_enrollees()
     card3_title = html.H3([
     html.Span(f"{number:,} ", style={
@@ -171,16 +172,16 @@ def create_overview_content():
         "color": "transparent",  
     }),
     html.Span("Enrollees", style={
-        "fontSize": "30px",           # Smaller size for "Enrollees"
-        "fontWeight": "normal",        # Regular weight
-        "color": "#084683",            # Dark gray color
-        "marginLeft": "10px",          # Small spacing from the number
-        "fontFamily": "Google Sans, sans--serif",  # Font style
+        "fontSize": "30px",           
+        "fontWeight": "normal",        
+        "color": "#084683",           
+        "marginLeft": "10px",          
+        "fontFamily": "Google Sans, sans--serif", 
     })
 ])
-    
+    #LINE GRAPH
     card3_content = html.Div([
-        # Trend Graph (Existing)
+        # Trend Graph
         dcc.Graph(
             figure=get_enrollment_trend_figure(),
             config={'displayModeBar': False},
@@ -203,8 +204,7 @@ def create_overview_content():
             style={'width': '300px', 'marginBottom': '0px'}
         ),
     
-            # Heatmap (New addition)
-    # Heatmap (with spinner, driven by callback)
+    # 2nd Vis HEATMAP
         dcc.Loading(
             dcc.Graph(
                 id='region-level-heatmap',
@@ -216,19 +216,23 @@ def create_overview_content():
         )
     ], style={'marginTop': '20px'})
 
+    #LEFT COLUMN CONTAINER
     big_card = create_info_card(card3_title, card3_content, height=1500)
 
+    #FIRST SECTION (LEFT AND RIGHT COLUMN COMBINATION)
     main_section = create_two_column_layout(big_card, stacked_visualization)
 
-    # 5) Map card
+    # 5) MAP (HEATMAP)
     map_card = create_visualization_card(
         "Regional Total Enrollment",
-        dcc.Graph(figure=phmap()),
+        dcc.Loading(
+        dcc.Graph(id="ph-map"),
+        type="circle"),
         "This heatmap highlights total enrollment per region across the Philippines.",
         height=880
     )
 
-    # 6) Compose and return
+    # 6) COMBINE ALL
     return html.Div([
         html.Div(main_section, style={"marginBottom": "30px"}), map_card],
         style={"maxWidth":"1400px","margin":"0 auto","padding":"10px"}
