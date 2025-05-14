@@ -71,13 +71,14 @@ def create_density_content():
         # "marginBottom": "0px"
     }),
     html.Div(
+        html.Div(
         dcc.Graph(
             id='private-pie-chart',
             figure=private_pie_chart(),
             config={'responsive': True},
-            style={"height": "325px", "width": "100%"} 
-        ),
-        style={"marginBottom": "0px"}  
+            style={"height": "250px", "width": "100%"} 
+        ), style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
+        style={"marginBottom": "20px"}  
     ),
     html.P("Enrollment Deficiency Analysis", style={
         "fontFamily": "Google Sans, sans-serif",
@@ -109,7 +110,7 @@ def create_density_content():
         dcc.Graph(
             id='private-deficiency-graph',
             config={'responsive': True},
-            style={"height": "261px"}  
+            style={"height": "336px"}  
         )
     )
 ], style={
@@ -125,16 +126,17 @@ def create_density_content():
         "color": "#DE082C",
         "textAlign": "left",
         "fontSize": "25px",
-        "marginBottom": "0px"
+        #"marginBottom": "0px"
     }),
     html.Div(
+        html.Div(
         dcc.Graph(
             id='public-pie-chart',
             figure=public_pie_chart(),
             config={'responsive': True},
-            style={"height": "325px", "width": "100%"}  
-        ),
-        style={"marginBottom": "0px"}
+            style={"height": "250px", "width": "100%"}  
+        ),style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
+        style={"marginBottom": "20px"}
     ),
     html.P("Enrollment Deficiency Analysis", style={
         "fontFamily": "Google Sans, sans-serif",
@@ -166,7 +168,7 @@ def create_density_content():
         dcc.Graph(
             id='public-deficiency-graph',
             config={'responsive': True},
-            style={"height": "261px"}  
+            style={"height": "336px"}  
         )
     )
 ], style={
