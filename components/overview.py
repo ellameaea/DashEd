@@ -199,25 +199,18 @@ def create_overview_content():
             style={"height": "430px", "width": "800px", 'marginBottom': '20px'}
         ),
         
-        # Forecast Text (New Addition)
+        # Forecast Text (Simplified to just show percentage change)
         html.Div([
             html.P(
-                f"Forecast for SY {forecast_results['next_year']}: {forecast_results['forecast']:,.0f} enrollees",
-                style={
-                    "fontSize": "18px",
-                    "fontWeight": "bold",
-                    "color": "#084683",
-                    "marginBottom": "5px",
-                }
-            ),
-            html.P(
-                f"({forecast_results['direction']} of {abs(forecast_results['change_percent']):.2f}% from SY {forecast_results['next_year'] - 1})",
+                f"Expect a {abs(forecast_results['change_percent']):.2f}% {forecast_results['direction']} next year",
                 style={
                     "fontSize": "16px",
                     "color": "#DE082C" if forecast_results['change_percent'] < 0 else "#084683",
+                    "fontWeight": "bold",
+                    "marginBottom": "20px"
                 }
             ),
-        ], style={"marginBottom": "20px"}),
+        ]),
         
         # Dropdown to select education level for heatmap
         dcc.Dropdown(
