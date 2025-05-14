@@ -84,7 +84,7 @@ def get_school_crowding_figure():
     ])
 
     fig.update_layout(
-    height=550,
+    height=600,
     title=dict(
         text='Measures of School Crowding per Region',
         font=dict(size=15)
@@ -108,15 +108,15 @@ def get_school_crowding_figure():
             showarrow=False,
             font=dict(size=18, color="#084683"),
             xanchor='right'
-        ),
-        dict(
-            text="<b>School Crowding Analysis</b>",
-            xref="paper", yref="paper",
-            x=0, y=-0.8,
-            showarrow=False,
-            font=dict(size=18, color="#DE082C"),
-            xanchor='left'
-        )
+         )#,
+        # dict(
+        #     text="Student Population Heatmap by Region and Strand",
+        #     xref="paper", yref="paper",
+        #     x=-0.1, y=-0.8,
+        #     showarrow=False,
+        #     font=dict(size=24, color="#DE082C"),
+        #     xanchor='left'
+        # )
     ]
 )
 
@@ -179,18 +179,19 @@ def get_subclassification_bubble_chart():
     
     fig.update_layout(
         title_font_size=15,
-        margin=dict(b=200),
-        height=600,
+        #margin=dict(b=200),
+        height=650,
     )
 
     return fig
 
 def add_annotation(fig):
     # Hardcoded custom text annotation
-    annotation_text = "<span style='color:#B03B60; font-weight:bold;'>Enrollment Analytics:</span><br>" \
-                      "Expect a <b>n%</b> increase in this region next year.<br>" \
-                      "Projected Students for Year n+1: <b>28,057,844</b><br>" \
-                      "<b>{region}</b> has the highest amount of enrollees for 2024"
+    annotation_text = ""
+                      #"<span style='color:#B03B60; font-weight:bold;'>Enrollment Analytics:</span><br>" 
+                      #"Expect a <b>n%</b> increase in this region next year.<br>" 
+                      #"Projected Students for Year n+1: <b>28,057,844</b><br>" 
+                      #"<b>{region}</b> has the highest amount of enrollees for 2024"
 
     fig.add_annotation(
         text=annotation_text,

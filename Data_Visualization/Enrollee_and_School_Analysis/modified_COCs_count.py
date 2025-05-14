@@ -26,7 +26,7 @@ total_schools_per_region = grouped.groupby('Region')['size'].sum().reset_index()
 #]
 #custom_colors = [primary_color] + light_colors[:len(coc_ranking) - 1]
 
-custom_palette = ['#084683', '#DE082C', '#F2EC1A', '#D9D9D9', '#0174DF']
+custom_palette = ['#084582', '#4a669a', '#788ab3', '#a4afcc', '#d1d6e5', '#ffffff']
 custom_colors = (custom_palette * ((len(coc_ranking) // len(custom_palette)) + 1))[:len(coc_ranking)]
 
 # Create stacked bar chart manually with go.Figure for more control
@@ -62,7 +62,7 @@ for i, row in total_schools_per_region.iterrows():
 
 # organize the layout of the chart itself with this
 fig.update_layout(
-    title="Number of Schools by Region and Modified COC", # Title of the chart
+    #title="Number of Schools by Region and Modified COC", # Title of the chart
     xaxis_title='Region', # X-axis title
     yaxis_title='Number of Schools', # Y-axis title
     height=700, # Height of the chart

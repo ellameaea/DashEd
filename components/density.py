@@ -57,10 +57,17 @@ def create_density_content():
 
     html.Div([
         # Apply the annotation here
+        html.P("Student Population Heatmap by Region and Strand", style={
+        "fontFamily": "Google Sans, sans-serif",
+        "color": "#DE082C",
+        "textAlign": "left",
+        "fontSize": "25px",
+        "marginBottom": "0px"
+    }),
         dcc.Graph(id='subclassification-bubble-chart', 
                   figure=add_annotation(get_subclassification_bubble_chart()), 
                   config={'responsive': True})
-    ], style={"paddingTop": "10px", "paddingBottom": "90px"})
+    ], style={"paddingTop": "50px", "paddingBottom": "0px"})
 ])
 
     private_content = html.Div([html.P(["Enrollee Distribution",html.Br(),"for Private and PSO Schools"], style={
@@ -68,7 +75,7 @@ def create_density_content():
         "color": "#DE082C",
         "textAlign": "left",
         "fontSize": "25px",
-        # "marginBottom": "0px"
+        "marginBottom": "0px"
     }),
     html.Div(
         html.Div(
@@ -188,7 +195,11 @@ def create_density_content():
 
 
     main_section = create_two_column_layout(density_main, density_stacked_visualization)
-    bottom_section = create_visualization_card("Number of Schools by Region and Modified COC", card3_content, height=None)
+    bottom_section = create_visualization_card(
+    html.Div("Number of Schools by Region and Modified COC", style={"paddingTop": "15px", "paddingLeft":"10px"}),
+    card3_content,
+    height=None
+)
 
     return html.Div([
         html.Div(main_section, style={"marginBottom": "30px"}),
