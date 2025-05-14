@@ -7,6 +7,7 @@ from Data_Visualization.phmap import phmap
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
 from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure, get_latest_total_enrollees
 from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
+from Data_Visualization.Enrollment_Analytics import forecast_enrollment
 
 # ——— Data & Region List ———
 DF = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
@@ -168,25 +169,28 @@ def create_overview_content():
     stacked_visualization = create_stacked_cards([pie_card, combined_card])
 
     # 4) Big placeholder card
-    number= get_latest_total_enrollees()
+    number = get_latest_total_enrollees()
+
+    # Get forecast results (assuming you've imported forecast_enrollment from your module)
+    forecast_results = forecast_enrollment()
+
     card3_title = html.H3([
-    html.Span(f"{number:,} ", style={
-        
-        "fontSize": "110px",
-        "fontWeight": "bold",
-        "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
-        "WebkitBackgroundClip": "text",  
-        "color": "transparent",  
-    }),
-    html.Span("Enrollees", style={
-        "fontSize": "30px",           # Smaller size for "Enrollees"
-        "fontWeight": "normal",        # Regular weight
-        "color": "#084683",            # Dark gray color
-        "marginLeft": "10px",          # Small spacing from the number
-        "fontFamily": "Google Sans, sans--serif",  # Font style
-    })
-])
-    
+        html.Span(f"{number:,} ", style={
+            "fontSize": "110px",
+            "fontWeight": "bold",
+            "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
+            "WebkitBackgroundClip": "text",  
+            "color": "transparent",  
+        }),
+        html.Span("Enrollees", style={
+            "fontSize": "30px",           
+            "fontWeight": "normal",        
+            "color": "#084683",            
+            "marginLeft": "10px",          
+            "fontFamily": "Google Sans, sans--serif",  
+        })
+    ])
+
     card3_content = html.Div([
         # Trend Graph (Existing)
         dcc.Graph(
@@ -194,34 +198,54 @@ def create_overview_content():
             config={'displayModeBar': False},
             style={"height": "430px", "width": "800px", 'marginBottom': '20px'}
         ),
+        
+        # Forecast Text (New Addition)
+        html.Div([
+            html.P(
+                f"Forecast for SY {forecast_results['next_year']}: {forecast_results['forecast']:,.0f} enrollees",
+                style={
+                    "fontSize": "18px",
+                    "fontWeight": "bold",
+                    "color": "#084683",
+                    "marginBottom": "5px",
+                }
+            ),
+            html.P(
+                f"({forecast_results['direction']} of {abs(forecast_results['change_percent']):.2f}% from SY {forecast_results['next_year'] - 1})",
+                style={
+                    "fontSize": "16px",
+                    "color": "#DE082C" if forecast_results['change_percent'] < 0 else "#084683",
+                }
+            ),
+        ], style={"marginBottom": "20px"}),
+        
         # Dropdown to select education level for heatmap
         dcc.Dropdown(
-            id='level-dropdown',  # Dropdown to select education level
+            id='level-dropdown',
             options=[
                 {'label': 'All', 'value': 'All'},
                 {'label': 'Kindergarten', 'value': 'Kindergarten'},
                 {'label': 'ELEM', 'value': 'ELEM'},
                 {'label': 'JHS', 'value': 'JHS'},
                 {'label': 'SHS', 'value': 'SHS'},
-                {'label': 'Total NG', 'value': 'Total NG'}, # to count how many total NG students there are per region
+                {'label': 'Total NG', 'value': 'Total NG'},
                 {'label': 'Subtotal', 'value': 'Subtotal'}
             ],
             value='All',
             clearable=False,
             style={'width': '300px', 'marginBottom': '0px'}
         ),
-    
-            # Heatmap (New addition)
+        
+        # Heatmap (Existing)
         dcc.Graph(
             id='region-level-heatmap',
-            figure=get_region_heatmap_figure(selected_level='All'),  # Placeholder for heatmap
+            figure=get_region_heatmap_figure(selected_level='All'),
             config={'displayModeBar': False},
             style={"height": "400px", "width": "800px"}
         )
     ], style={'marginTop': '20px'})
 
     big_card = create_info_card(card3_title, card3_content, height=1500)
-
     main_section = create_two_column_layout(big_card, stacked_visualization)
 
     # 5) Map card
