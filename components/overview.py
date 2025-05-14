@@ -207,7 +207,9 @@ def create_overview_content():
                     "fontSize": "16px",
                     "color": "#DE082C" if forecast_results['change_percent'] < 0 else "#084683",
                     "fontWeight": "bold",
+                    "fontFamily": "Google Sans, sans--serif",
                     "marginBottom": "20px"
+                    
                 }
             ),
         ]),
