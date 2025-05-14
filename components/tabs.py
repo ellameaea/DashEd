@@ -86,18 +86,17 @@ def create_tabs():
                     ),
                     html.Div(
                         children=[
-                            html.Button("Select Data Set", style={
-                                "fontFamily": "Montserrat, sans-serif",
-                                "fontSize": "14px",
-                                "padding": "6px 16px",
-                                "backgroundColor": "transparent",
-                                "color": "#084683",
-                                "border": "2px solid #DE082C",
-                                "borderRadius": "999px",
-                                "cursor": "pointer",
-                                "marginRight": "10px",
-                            }),
-                            html.Button("+ Import Data Set", style={
+                                dcc.Dropdown(
+                                    id="dataset-dropdown",
+                                    placeholder="Select Data Set",
+                                    style={
+                                        "minWidth": "200px",
+                                        "marginRight": "10px",
+                                        "fontFamily": "Montserrat, sans-serif",
+                                        "fontSize": "14px",
+                                    }
+                                ),
+                                html.Button("+ Import Data Set", id="open-upload", n_clicks=0, style={
                                 "fontFamily": "Montserrat, sans-serif",
                                 "fontSize": "14px",
                                 "padding": "6px 16px",
