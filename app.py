@@ -6,6 +6,7 @@ from callbacks import register_callbacks
 import plotly.graph_objects as go
 from components.header import create_header
 from components.tabs import create_tabs
+from components.import_modal import import_modal
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Indiv_private_deficiency import indiv_private_deficiency_chart
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_private import private_deficiency_chart
 from Data_Visualization.Density_Tab_Latest.Dropout_Deficiency.Total_deficiency_public import public_deficiency_chart
@@ -22,7 +23,7 @@ app = dash.Dash(
 app.layout = html.Div(
     children=[
         create_header(),  # Always visible header
-
+        import_modal(),  # Modal for file upload
         # Store holding the active dataset records
         dcc.Store(
             id="stored-data",
@@ -32,11 +33,6 @@ app.layout = html.Div(
         dcc.Store(
             id="processing-trigger",
             data=None
-        ),
-        # Status messages from file upload processing
-        html.Div(
-            id="upload-status",
-            style={"margin": "10px 80px", "color": "#084683"}
         ),
         # (Optional) existing menu output area
         html.Div(
