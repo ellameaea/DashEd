@@ -203,5 +203,82 @@ def register_callbacks(app):
     def update_total_enrollees(selected_file):
         number = get_latest_total_enrollees(selected_file)
         return f"{number:,}"
+    
+    #Density - Total Schools
+    @app.callback(
+    Output("total-schools-display", "children"),
+    Input("stored-data", "data")
+    )
+    def update_total_schools_display(data):
+        if not data:
+            raise PreventUpdate
+
+        df = pd.DataFrame(data)
+        total_schools = df.shape[0]
+        return f"{total_schools:,}"
+    
+    #Density - Bar
+    from Data_Visualization.density_datavis1 import get_school_crowding_figure
+
+    @app.callback(
+        Output("school-crowding-chart", "figure"),
+        Input("stored-data", "data")
+    )
+    def update_school_crowding_chart(data):
+        if not data:
+            raise PreventUpdate
+        df = pd.DataFrame(data)
+        return get_school_crowding_figure(df)
+    
+    #Density - Heatmap
+    from Data_Visualization.density_datavis1 import get_subclassification_bubble_chart
+
+    @app.callback(
+        Output("subclassification-bubble-chart", "figure"),
+        Input("stored-data", "data")
+    )
+    def update_subclassification_chart(data):
+        if not data:
+            raise PreventUpdate
+        df = pd.DataFrame(data)
+        return get_subclassification_bubble_chart(df)
+    
+    #PIE - PUBLIC AND PRIVATE
+    from Data_Visualization.density_piecharts import public_pie_chart, private_pie_chart
+
+    @app.callback(
+        Output('public-pie-chart', 'figure'),
+        Input('stored-data', 'data')
+    )
+    def update_public_pie_chart(data):
+        if not data:
+            raise PreventUpdate
+        df = pd.DataFrame(data)
+        return public_pie_chart(df)
+    
+    @app.callback(
+    Output('private-pie-chart', 'figure'),
+    Input('stored-data', 'data')
+    )
+    def update_private_pie_chart(data):
+        if not data:
+            raise PreventUpdate
+        df = pd.DataFrame(data)
+        return private_pie_chart(df)
+    
+    #BAR
+    from Data_Visualization.Enrollee_and_School_Analysis.modified_COCs_count import stacked_bar_chart
+    from dash.exceptions import PreventUpdate
+
+    @app.callback(
+        Output('stacked-bar-chart', 'figure'),
+        Input('stored-data', 'data')  # Same `stored-data` used for pie chart
+    )
+    def update_stacked_bar_chart(data):
+        if not data:
+            raise PreventUpdate
+        df = pd.DataFrame(data)
+        return stacked_bar_chart(df)
+
 
 

@@ -85,14 +85,21 @@ def create_tabs():
 
                     # Dataset controls: dropdown for selection and upload trigger
                     html.Div(
-                        style={"display": "flex", "alignItems": "center", "paddingBottom": "12px"},
+                        style={"display": "flex", "alignItems": "center", "paddingBottom": "10px"},
                         children=[
                             dcc.Dropdown(
                                 id="dataset-select",
                                 options=options,
                                 value="CLEANED_SY2023_Enrollment.csv",
                                 clearable=False,
-                                style={"width": "200px", "marginRight": "16px"},
+                                className="custom-dropdown",
+                                style={
+                                    "width": "250px",
+                                    "marginRight": "10px",
+                                    "fontFamily": "Montserrat, sans-serif",
+                                    "fontSize": "14px",
+                                    "color": "#084683",
+                                },
                             ),
                             html.Button(
                                 "+ Import Data Set",  # Matches callback ID expectations
@@ -107,7 +114,7 @@ def create_tabs():
                                     "border": "2px solid #DE082C",
                                     "borderRadius": "999px",
                                     "cursor": "pointer",
-                                    "marginRight": "10px",
+                                    "marginRight": "5px",
                                 },
                             ),
                             html.Div(
