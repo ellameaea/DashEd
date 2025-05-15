@@ -39,6 +39,7 @@ def public_pie_chart():
         textinfo='label',  
         textposition='outside',  
         marker=dict(colors=custom_colors),
+        domain={'x': [0, 1], 'y': [0, 1]},
         showlegend=False 
     )
 
@@ -52,21 +53,23 @@ def public_pie_chart():
         textposition='inside',  
         insidetextfont=dict(color="black"), 
         marker=dict(colors=custom_colors),
+        domain={'x': [0, 1], 'y': [0, 1]},
         showlegend=False  
     )
 
     # Combine the two traces
     fig = go.Figure(data=[labels_trace, percentages_trace])
     
-    fig.update_layout(title="", height=390, legend_title_text="Grade Levels", legend=dict(
+    fig.update_layout(title="", height=390, legend_title_text="Grade Levels", margin=dict(t=0, b=0, l=0, r=0),legend=dict(
         title="Grade Levels",  
         borderwidth=1,  
         bordercolor="lightgray",  
         traceorder="normal",  
-        orientation="v",  
-        y=0.5,  
-        yanchor="middle",  
-        x=1.2,  
+        orientation="h",  
+        y=-0.2,  
+        yanchor="bottom",  
+        x=0.5,  
+        xanchor="center",
         font=dict(size=10)
     ))
     return fig
@@ -106,6 +109,7 @@ def private_pie_chart():
         textinfo='label',  
         textposition='outside',
         marker=dict(colors=custom_colors),  
+        domain={'x': [0, 1], 'y': [0, 1]},
         showlegend=False 
     )
 
@@ -119,21 +123,23 @@ def private_pie_chart():
         textposition='inside',  
         insidetextfont=dict(color="black"),
         marker=dict(colors=custom_colors),  
+        domain={'x': [0, 1], 'y': [0, 1]},
         showlegend=False  
     )
 
     # Combine the two traces
     fig = go.Figure(data=[labels_trace, percentages_trace])
     
-    fig.update_layout(title="", height=600, legend_title_text="Grade Levels", legend=dict(
+    fig.update_layout(title="", height=600, legend_title_text="Grade Levels", margin=dict(t=0, b=0, l=0, r=0), legend=dict(
         title="Grade Levels",  
         borderwidth=1,  
         bordercolor="lightgray", 
         traceorder="normal", 
-        orientation="v",  
-        y=0.5,  
-        yanchor="middle",
-        x=1.2,  
+        orientation="h",  
+        y=-0.2,  
+        yanchor="bottom",  
+        x=0.5,  
+        xanchor="center",  
         font=dict(size=10)
     ))
     return fig

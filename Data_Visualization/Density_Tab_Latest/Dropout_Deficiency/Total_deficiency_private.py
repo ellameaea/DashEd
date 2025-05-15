@@ -97,6 +97,7 @@ def private_deficiency_chart():
     )
 
     fig.update_layout(
+        title_font=dict(size=11),
         xaxis_title="School Year",
         yaxis_title="Deficiency Ratio (%)",
         yaxis=dict(range=[0, 100]),
