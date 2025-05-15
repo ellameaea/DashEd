@@ -34,10 +34,7 @@ total_schools = df.shape[0]
 def get_total_schools():
     return total_schools
 
-def get_school_crowding_figure():
-    # Load the dataset
-    df = pd.read_csv('CSV Files/CLEANED_SY2023_Enrollment.csv')  # Adjust path as needed
-
+def get_school_crowding_figure(df):
     enrollee_columns = [
         'K Male', 'K Female', 'G1 Male', 'G1 Female', 'G2 Male', 'G2 Female',
         'G3 Male', 'G3 Female', 'G4 Male', 'G4 Female', 'G5 Male', 'G5 Female',
@@ -54,6 +51,7 @@ def get_school_crowding_figure():
         'G12 ARTS Male', 'G12 ARTS Female'
     ]
 
+    df[enrollee_columns] = df[enrollee_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
     df['Total Enrollees'] = df[enrollee_columns].sum(axis=1)
 
     region_summary = df.groupby('Region').agg({
@@ -65,12 +63,7 @@ def get_school_crowding_figure():
     region_summary['Enrollees per School'] = (region_summary['Number of Schools'] / region_summary['Total Enrollees']) * 100
     region_summary = region_summary.sort_values(by='Enrollees per School', ascending=False).reset_index(drop=True)
 
-    colors = []
-    for idx in range(len(region_summary)):
-        if idx == 0 or idx == len(region_summary) - 1:
-            colors.append('#084683')
-        else:
-            colors.append('#0174DF')
+    colors = ['#084683' if i == 0 or i == len(region_summary) - 1 else '#0174DF' for i in range(len(region_summary))]
 
     fig = go.Figure(data=[
         go.Bar(
@@ -84,58 +77,51 @@ def get_school_crowding_figure():
     ])
 
     fig.update_layout(
-    height=550,
-    title=dict(
-        text='Measures of School Crowding per Region',
-        font=dict(size=15)
-    ),
-    xaxis_title='Region',
-    yaxis=dict(
-        title='Percentage (%)',
-        range=[0, region_summary['Enrollees per School'].max() * 1.1]
-    ),
-    barmode='group',
-    legend=dict(title='Metric'),
-    xaxis_tickangle=-45,
-    uniformtext_minsize=8,
-    uniformtext_mode='hide',
-    margin=dict(b=200),
-    annotations=[
-        dict(
-            text="Normal crowding across regions will be reached after <b>n years</b>",
-            xref="paper", yref="paper",
-            x=1, y=-0.6,
-            showarrow=False,
-            font=dict(size=18, color="#084683"),
-            xanchor='right'
+        height=600,
+        title=dict(
+            text='Measures of School Crowding per Region',
+            font=dict(size=15)
         ),
-        dict(
-            text="<b>School Crowding Analysis</b>",
-            xref="paper", yref="paper",
-            x=0, y=-0.8,
-            showarrow=False,
-            font=dict(size=18, color="#DE082C"),
-            xanchor='left'
-        )
-    ]
-)
+        xaxis_title='Region',
+        yaxis=dict(
+            title='Percentage (%)',
+            range=[0, region_summary['Enrollees per School'].max() * 1.1]
+        ),
+        barmode='group',
+        legend=dict(title='Metric'),
+        xaxis_tickangle=-45,
+        uniformtext_minsize=8,
+        uniformtext_mode='hide',
+        margin=dict(b=200),
+        annotations=[
+            dict(
+                text="Normal crowding across regions will be reached after <b>n years</b>",
+                xref="paper", yref="paper",
+                x=1, y=-0.6,
+                showarrow=False,
+                font=dict(size=18, color="#084683"),
+                xanchor='right'
+            ),
+            dict(
+                text="Student Population Heatmap by Region and Strand",
+                xref="paper", yref="paper",
+                x=-0.1, y=-0.8,
+                showarrow=False,
+                font=dict(size=24, color="#DE082C"),
+                xanchor='left'
+            )
+        ]
+    )
 
     return fig
 
-# Load CSV
-combined_population_df = pd.read_csv('CSV Files/combined_population_2023.csv')
-
-def get_subclassification_bubble_chart():
-    file_name = "CSV Files/CLEANED_SY2023_Enrollment.csv"
-
+def get_subclassification_bubble_chart(df):
     # Count subclassifications per region
     region_subclassification_counts = defaultdict(lambda: defaultdict(int))
-    with open(file_name, mode='r', encoding='utf-8') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            region = row['Region']
-            subclassification = row['School Subclassification']
-            region_subclassification_counts[region][subclassification] += 1
+    for _, row in df.iterrows():
+        region = row['Region']
+        subclassification = row['School Subclassification']
+        region_subclassification_counts[region][subclassification] += 1
 
     subclassification_data = []
     for region, subclassifications in region_subclassification_counts.items():
@@ -147,11 +133,8 @@ def get_subclassification_bubble_chart():
             })
     subclassification_df = pd.DataFrame(subclassification_data)
 
-    # Load enrollee data
-    df = pd.read_csv(file_name)
-
     enrollee_columns = [col for col in df.columns if 'Male' in col or 'Female' in col]
-    df['Total Enrollees'] = df[enrollee_columns].sum(axis=1)
+    df['Total Enrollees'] = df[enrollee_columns].apply(pd.to_numeric, errors='coerce').fillna(0).sum(axis=1)
 
     region_summary = df.groupby('Region').agg({
         'Total Enrollees': 'sum',
@@ -176,11 +159,11 @@ def get_subclassification_bubble_chart():
         template='plotly',
         color_discrete_sequence=['#084683', '#DE082C', '#F2EC1A', '#D9D9D9']
     )
-    
+
     fig.update_layout(
         title_font_size=15,
         margin=dict(b=200),
-        height=600,
+        height=700,
     )
 
     return fig
