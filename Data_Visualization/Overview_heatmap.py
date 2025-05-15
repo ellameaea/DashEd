@@ -3,10 +3,9 @@ import numpy as np
 from dash import dcc
 import plotly.graph_objects as go
 
-def get_region_heatmap_figure(selected_level='All'):
-    # Load the dataset
-    file_path = "CSV Files/CLEANED_SY2023_Enrollment.csv"
-    df = pd.read_csv(file_path)
+def get_region_heatmap_figure(df, selected_level='All'):
+    if df is None or df.empty:
+        df = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
 
     # Define combined levels
     combined_levels = {

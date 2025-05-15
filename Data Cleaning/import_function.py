@@ -97,7 +97,7 @@ def run_processing(data_status):
         raise PreventUpdate
 
     try:
-        subprocess.run(['python3', 'Data Cleaning/data-cleaning_1.py'], check=True)
+        subprocess.run(['python3', 'Data Cleaning/data_cleaning_1.py'], check=True)
         subprocess.run(['python3', 'Data Cleaning/combine_population.py'], check=True)
         return " File processed successfully!", False, True
     except subprocess.CalledProcessError as e:

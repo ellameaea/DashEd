@@ -1,5 +1,3 @@
-# Data_Visualization/overview_layout.py
-
 import pandas as pd
 from dash import html, dcc
 from Data_Visualization.Overview_output import pie_chart_total_enrollees
@@ -7,14 +5,11 @@ from Data_Visualization.phmap import phmap
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
 from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure, get_latest_total_enrollees
 from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
-
-# ——— Data & Region List ———
-DF = pd.read_csv("CSV Files/CLEANED_SY2023_Enrollment.csv")
-REGIONS = ["All Regions"] + sorted(DF["Region"].dropna().unique().tolist())
+from Data_Visualization.Enrollment_Analytics import forecast_enrollment
 
 # ——— Helper: Info Card ———
 def create_info_card(title, content, height=None, width=None,
-                     gradient="linear-gradient(133deg, rgba(249,249,249,0.13) 0%, rgba(8,70,131,1) 70%, rgba(222,8,44,1) 80%)"):
+                     gradient="linear-gradient(133deg, rgba(249,249,249,0.13) 0%, rgba(8,70,131,1) 70%, rgba(222,8,44,1) 80%)"): 
     return html.Div([
         html.Div([
             html.H3(title, style={
@@ -51,7 +46,7 @@ def create_visualization_card(title, chart_component, description=None,
             "fontSize": "24px",
             "marginBottom": "10px",
             "fontWeight": "Normal",
-            "marginTop": "0px" 
+            "marginTop": "0px"
         })
     ]
     if description:
@@ -79,18 +74,18 @@ def create_two_column_layout(left_component, right_component):
             "flex":"1 1 60%",
             "display": "flex",
             "flexDirection": "column",
-            "paddingRight": "10px"  # ✅ prevents content hugging the divider
+            "paddingRight": "10px"
         }),
         html.Div([right_component], style={
             "flex": "1 1 35%",
             "display": "flex",
             "flexDirection": "column",
-            "paddingLeft": "10px"   # ✅ prevents crowding at the edge
+            "paddingLeft": "10px"
         })
     ], style={
         "display": "flex",
-        "flexWrap": "nowrap",           # Prevents wrapping
-        "alignItems": "stretch",        # Ensures columns match height
+        "flexWrap": "nowrap",
+        "alignItems": "stretch",
         "gap": "20px",
         "width": "100%"
     })
@@ -103,13 +98,18 @@ def create_stacked_cards(cards_list):
 
 # ——— MAIN: Overview Content ———
 def create_overview_content():
+    #1) Total Enrollees by Level
     pie_card = create_visualization_card(
         "Total Enrollees by Level",
-        pie_chart_total_enrollees,
+        dcc.Loading(
+            children=dcc.Graph(id="combined-levels-pie"),
+            type="circle",
+            style={"height": "100%"}  # ensures the spinner fills the card
+        ),
         height=450,
-    )
+)
 
-    # 2) Combined card for trend and interactive components
+    # 2) Combined card for Enrollment Sex Distribution and Gender Distribution Analysis
     # Create dropdowns
     chart_select = dcc.Dropdown(
         id="overview-chart-dropdown",
@@ -118,82 +118,90 @@ def create_overview_content():
             {"label":"Gender Distribution by Level","value":"category"},
         ],
         value="shs", clearable=False,
-        style={"fontFamily":"Google Sans, sans--serif", "fontSize":"14px","width":"300px","display":"inline-block","marginRight":"5%", "fontWeight":"Normal"}
+        style={"fontFamily":"Google Sans, sans--serif", "fontSize":"14px","width":"300px","display":"inline-block","marginRight":"5%", "fontWeight":"Normal","color":"black"}
     )
+
     region_select = dcc.Dropdown(
         id="overview-region-dropdown",
-        options=[{"label":r,"value":r} for r in REGIONS],
+        options=[{"label":"All Regions","value":"All Regions"}],
         value="All Regions", clearable=False,
-        style={"fontFamily":"Google Sans, sans--serif","fontSize":"14px","width":"200px","display":"inline-block", "marginBottom":"10px", "fontWeight":"Normal"}
+        style={"fontFamily":"Google Sans, sans--serif","fontSize":"14px","width":"200px","display":"inline-block","fontWeight":"Normal", "color":"black"}
     )
     
-    # Create a combined panel with trend chart and interactive controls
-    combined_panel = html.Div([
-        # Trend chart section
+    combined_panel = html.Div([ 
         html.Div([
-           html.H4("Enrollment Sex Distribution", style={
-            "fontFamily": "Google Sans, sans-serif",
-            "color": "#DE082C",
-            "fontSize": "24px",
-            "marginBottom": "10px",
-            "fontWeight": "Normal",
-            "marginTop": "0px"  # ← This line ensures no space above title
-        }),
-            dcc.Loading(children=[dcc.Graph(figure=enrollment_trend_by_gender, style={"height":"300px"})], type = "circle")
-        ], style={"marginBottom": "30px",
-                "marginTop": "0px",          # ← Removes default padding from above the card
-                "paddingTop": "0px"          # ← Just in case some internal Dash default is adding padding
+            html.H4("Enrollment Sex Distribution", style={
+                "fontFamily": "Google Sans, sans-serif",
+                "color": "#DE082C",
+                "fontSize": "24px",
+                "marginBottom": "10px",
+                "fontWeight": "Normal",
+                "marginTop": "0px"
             }),
-        
-        # Interactive section
+            dcc.Loading(dcc.Graph(id="trend-chart"), type="circle")
+        ], style={"marginBottom": "15px","marginTop": "0px","paddingTop": "0px"}),
         html.Div([
             html.H4("Gender Distribution Analysis", style={
                 "fontFamily":"Google Sans, sans-serif",
                 "color":"#DE082C",
-                "fontSize":"24px","marginBottom":"10px",
-                "fontWeight":"Normal",
+                "fontSize":"24px","marginBottom":"0px","fontWeight":"Normal",
             }),
             html.Div([chart_select, region_select], style={"marginBottom":"10px"}),
-            dcc.Loading(children=[dcc.Graph(id="overview-graph", style={"height":"300px"})], type = "circle")
+            # html.Div(id="dataset-info", style={"marginBottom":"12px","fontStyle":"italic"}),
+            dcc.Loading(dcc.Graph(id="overview-graph"), type="circle")
         ])
-    ], style={"height":"100%", "display":"flex", "flexDirection":"column"})
+    ], style={"height":"100%","display":"flex","flexDirection":"column"})
     
     combined_card = create_visualization_card(
         combined_panel,
         "",
-        height=1025  # Match the height of the big card
+        height=1025
     )
 
-    # 3) Stack pie and combined card
+    # 3) RIGHT COLUMN // OVERVIEW
     stacked_visualization = create_stacked_cards([pie_card, combined_card])
 
-    # 4) Big placeholder card
-    number= get_latest_total_enrollees()
-    card3_title = html.H3([
-    html.Span(f"{number:,} ", style={
-        
-        "fontSize": "110px",
-        "fontWeight": "bold",
-        "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
-        "WebkitBackgroundClip": "text",  
-        "color": "transparent",  
-    }),
-    html.Span("Enrollees", style={
-        "fontSize": "30px",           # Smaller size for "Enrollees"
-        "fontWeight": "normal",        # Regular weight
-        "color": "#084683",            # Dark gray color
-        "marginLeft": "10px",          # Small spacing from the number
-        "fontFamily": "Google Sans, sans--serif",  # Font style
-    })
-])
+    # 4) LEFT COLUMN // OVERVIEW
     
+    forecast_results = forecast_enrollment()
+    card3_title = html.H3([
+        html.Span(id="total-enrollees-display", style={
+            "fontSize": "110px",
+            "fontWeight": "bold",
+            "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
+            "WebkitBackgroundClip": "text",  
+            "color": "transparent",  
+        }),
+        html.Span("Enrollees", style={
+            "fontSize": "30px",           
+            "fontWeight": "normal",        
+            "color": "#084683",           
+            "marginLeft": "10px",          
+            "fontFamily": "Google Sans, sans--serif", 
+        })
+    ])
+    #LINE GRAPH
     card3_content = html.Div([
-        # Trend Graph (Existing)
+        # Trend Graph
         dcc.Graph(
             figure=get_enrollment_trend_figure(),
             config={'displayModeBar': False},
             style={"height": "430px", "width": "800px", 'marginBottom': '20px'}
         ),
+
+        html.Div([
+            html.P(
+                f"Expect a {abs(forecast_results['change_percent']):.2f}% {forecast_results['direction']} next year",
+                style={
+                    "fontSize": "16px",
+                    "color": "#DE082C" if forecast_results['change_percent'] < 0 else "#084683",
+                    "fontWeight": "bold",
+                    "fontFamily": "Google Sans, sans--serif",
+                    "marginBottom": "20px"
+                    
+                }
+            ),
+        ]),
         # Dropdown to select education level for heatmap
         dcc.Dropdown(
             id='level-dropdown',  # Dropdown to select education level
@@ -211,28 +219,35 @@ def create_overview_content():
             style={'width': '300px', 'marginBottom': '0px'}
         ),
     
-            # Heatmap (New addition)
-        dcc.Graph(
-            id='region-level-heatmap',
-            figure=get_region_heatmap_figure(selected_level='All'),  # Placeholder for heatmap
-            config={'displayModeBar': False},
-            style={"height": "400px", "width": "800px"}
+    # 2nd Vis HEATMAP
+        dcc.Loading(
+            dcc.Graph(
+                id='region-level-heatmap',
+                config={'displayModeBar': False},
+                style={"height": "100%", "width": "100%"}
+            ),
+            type='circle',
+            style={"height": "400px", "width": "800px", "display": "inline-block"}
         )
     ], style={'marginTop': '20px'})
 
+    #LEFT COLUMN CONTAINER
     big_card = create_info_card(card3_title, card3_content, height=1500)
 
+    #FIRST SECTION (LEFT AND RIGHT COLUMN COMBINATION)
     main_section = create_two_column_layout(big_card, stacked_visualization)
 
-    # 5) Map card
+    # 5) MAP (HEATMAP)
     map_card = create_visualization_card(
         "Regional Total Enrollment",
-        dcc.Graph(figure=phmap()),
+        dcc.Loading(
+        dcc.Graph(id="ph-map"),
+        type="circle"),
         "This heatmap highlights total enrollment per region across the Philippines.",
         height=880
     )
 
-    # 6) Compose and return
+    # 6) COMBINE ALL
     return html.Div([
         html.Div(main_section, style={"marginBottom": "30px"}), map_card],
         style={"maxWidth":"1400px","margin":"0 auto","padding":"10px"}

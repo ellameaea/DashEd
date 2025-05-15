@@ -67,12 +67,12 @@ def plot_enrollment_trend_by_gender(data):
         legend=dict(
             orientation='h',
             yanchor='bottom',
-            y=-1.0,
+            y=-0.4,
             xanchor='center',
             x=0.5,
             font=dict(size=12)
         ),
-        margin=dict(l=40, r=40, t=100, b=100)
+        margin=dict(l=40, r=40, t=60, b=40)
     )
 
     fig.update_xaxes(
