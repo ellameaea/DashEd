@@ -5,6 +5,7 @@ from Data_Visualization.phmap import phmap
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
 from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure, get_latest_total_enrollees
 from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
+from Data_Visualization.Enrollment_Analytics import forecast_enrollment
 
 # ——— Helper: Info Card ———
 def create_info_card(title, content, height=None, width=None,
@@ -162,6 +163,7 @@ def create_overview_content():
 
     # 4) LEFT COLUMN // OVERVIEW
     number= get_latest_total_enrollees()
+    forecast_results = forecast_enrollment()
     card3_title = html.H3([
     html.Span(f"{number:,} ", style={
         
@@ -187,6 +189,20 @@ def create_overview_content():
             config={'displayModeBar': False},
             style={"height": "430px", "width": "800px", 'marginBottom': '20px'}
         ),
+
+        html.Div([
+            html.P(
+                f"Expect a {abs(forecast_results['change_percent']):.2f}% {forecast_results['direction']} next year",
+                style={
+                    "fontSize": "16px",
+                    "color": "#DE082C" if forecast_results['change_percent'] < 0 else "#084683",
+                    "fontWeight": "bold",
+                    "fontFamily": "Google Sans, sans--serif",
+                    "marginBottom": "20px"
+                    
+                }
+            ),
+        ]),
         # Dropdown to select education level for heatmap
         dcc.Dropdown(
             id='level-dropdown',  # Dropdown to select education level
