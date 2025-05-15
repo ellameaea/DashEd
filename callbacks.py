@@ -3,6 +3,7 @@ from dash.exceptions import PreventUpdate
 import os, base64, subprocess, re, pandas as pd
 import pandas as pd
 import time
+import sys
 from components.overview import create_overview_content
 from components.density import create_density_content
 from Data_Visualization.Enrollee_Gender_Analysis.Totals_Gender_bar import gender_bar
@@ -29,28 +30,19 @@ def register_callbacks(app):
 
     raw_excel_dir = "_Raw Excel Files"
 
-    # 2. Show or hide the file upload component
+    # 2. Show or hide the file upload modal
     @app.callback(
-        Output("upload-container", "children"),
-        Input("show-upload-btn", "n_clicks")
+        Output("import-modal", "style"),
+        Input("show-upload-btn", "n_clicks"),
+        State("import-modal", "style")
     )
-    def display_upload(n_clicks):
+    def toggle_import_modal(n_clicks, current_style):
         if n_clicks and n_clicks > 0:
-            return dcc.Upload(
-                id="upload-data",
-                children=html.Div(["Drag & Drop or ", html.A("Select a File")]),
-                style={
-                    "width": "200px",
-                    "height": "60px",
-                    "lineHeight": "60px",
-                    "borderWidth": "1px",
-                    "borderStyle": "dashed",
-                    "borderRadius": "5px",
-                    "textAlign": "center"
-                },
-                multiple=False
-            )
-        return html.Div()
+            # Toggle visibility based on current style
+            if current_style and current_style.get("display") == "none":
+                return {"display": "block"}
+            return {"display": "none"}
+        return {"display": "none"}
 
     # 3. Handle file upload: save, process, and trigger data refresh
     @app.callback(
@@ -72,22 +64,42 @@ def register_callbacks(app):
             filepath = os.path.join(raw_excel_dir, filename)
             with open(filepath, "wb") as f:
                 f.write(decoded)
-            # Run cleaning and combine scripts
-            subprocess.run(["python3", "Data Cleaning/data_cleaning_1.py"], check=True)
-            subprocess.run(["python3", "Data Cleaning/combine_population.py"], check=True)
+            # Run cleaning and combine scripts using the current Python interpreter
+            subprocess.run([sys.executable, "Data Cleaning/data_cleaning_1.py"], check=True)
+            subprocess.run([sys.executable, "Data Cleaning/combine_population.py"], check=True)
             return "File uploaded and processed successfully!", "start_processing"
+        except subprocess.CalledProcessError as e:
+            return f"Error in processing script: {e}", None
         except Exception as e:
-            return f"Error during processing: {e}", None
+            return f"Unexpected error: {e}", None
 
     # 4. Reload dropdown options when a new CSV appears
     @app.callback(
         Output("dataset-select", "options"),
-        Input("upload-status", "children")
+        Input("upload-status", "children"),
+        Input("processing-trigger", "data")
     )
-    def refresh_dropdown(_msg):
+    def update_dataset_dropdown(_, trigger_value):
         files = [f for f in os.listdir("CSV Files") if f.endswith(".csv")]
-        return [{"label": f, "value": f} for f in files]
+        filtered_files = [
+            f for f in files if re.match(r"CLEANED_SY(\d{4})_Enrollment\.csv", f)
+        ]
 
+        # Extract years and sort descending
+        sorted_files = sorted(
+            filtered_files,
+            key=lambda f: int(re.search(r"CLEANED_SY(\d{4})_Enrollment", f).group(1)),
+            reverse=True
+        )
+
+        return [
+            {
+                "label": "SY" + re.search(r"CLEANED_SY(\d{4})_Enrollment\.csv", f).group(1),
+                "value": f
+            }
+            for f in sorted_files
+        ]
+    
     # 6. Show which dataset is active, with row/column counts
     @app.callback(
         Output("dataset-info", "children"),
