@@ -32,26 +32,42 @@ def get_enrollment_trend_figure(directory='CSV Files'):
 
     return fig
 
-def get_latest_total_enrollees(directory='CSV Files'):
+def get_latest_total_enrollees(selected_file=None, directory='CSV Files'):
     """
-    Get the total number of enrollees from the most recent year.
+    Get the total number of enrollees from the selected dataset.
+    If no file is selected, defaults to the most recent year.
     """
-    # careful with this. Make sure that the correct year is selected. 
-    # title_enrollees for overview.py
-    data = []
-    pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
-
-    for filename in os.listdir(directory):
-        match = pattern.match(filename)
-        if match:
-            year = int(match.group(1))
-            filepath = os.path.join(directory, filename)
+    try:
+        if selected_file:
+            # Use the selected file
+            filepath = os.path.join(directory, selected_file)
             df = pd.read_csv(filepath)
-
+            
             enrollment_columns = [col for col in df.columns if col.endswith('Male') or col.endswith('Female')]
             total_enrollees = df[enrollment_columns].sum().sum()
-            data.append({'Year': year, 'Total Enrollees': total_enrollees})
-    
-    df = pd.DataFrame(data)
-    latest_row = df[df['Year'] == df['Year'].max()]
-    return int(latest_row['Total Enrollees'].values[0])
+            return int(total_enrollees)
+        else:
+            # Fallback to most recent year if no file is selected
+            data = []
+            pattern = re.compile(r'CLEANED_SY(\d{4})_Enrollment\.csv')
+
+            for filename in os.listdir(directory):
+                match = pattern.match(filename)
+                if match:
+                    year = int(match.group(1))
+                    filepath = os.path.join(directory, filename)
+                    df = pd.read_csv(filepath)
+
+                    enrollment_columns = [col for col in df.columns if col.endswith('Male') or col.endswith('Female')]
+                    total_enrollees = df[enrollment_columns].sum().sum()
+                    data.append({'Year': year, 'Total Enrollees': total_enrollees})
+            
+            if not data:
+                return 0
+                
+            df = pd.DataFrame(data)
+            latest_row = df[df['Year'] == df['Year'].max()]
+            return int(latest_row['Total Enrollees'].values[0])
+    except Exception as e:
+        print(f"Error in get_latest_total_enrollees: {e}")
+        return 0

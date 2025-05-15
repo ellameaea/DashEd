@@ -162,25 +162,24 @@ def create_overview_content():
     stacked_visualization = create_stacked_cards([pie_card, combined_card])
 
     # 4) LEFT COLUMN // OVERVIEW
-    number= get_latest_total_enrollees()
+    
     forecast_results = forecast_enrollment()
     card3_title = html.H3([
-    html.Span(f"{number:,} ", style={
-        
-        "fontSize": "110px",
-        "fontWeight": "bold",
-        "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
-        "WebkitBackgroundClip": "text",  
-        "color": "transparent",  
-    }),
-    html.Span("Enrollees", style={
-        "fontSize": "30px",           
-        "fontWeight": "normal",        
-        "color": "#084683",           
-        "marginLeft": "10px",          
-        "fontFamily": "Google Sans, sans--serif", 
-    })
-])
+        html.Span(id="total-enrollees-display", style={
+            "fontSize": "110px",
+            "fontWeight": "bold",
+            "background": "linear-gradient(45deg, #F9F9F9, #084683, #DE082C)",  
+            "WebkitBackgroundClip": "text",  
+            "color": "transparent",  
+        }),
+        html.Span("Enrollees", style={
+            "fontSize": "30px",           
+            "fontWeight": "normal",        
+            "color": "#084683",           
+            "marginLeft": "10px",          
+            "fontFamily": "Google Sans, sans--serif", 
+        })
+    ])
     #LINE GRAPH
     card3_content = html.Div([
         # Trend Graph

@@ -11,6 +11,8 @@ from Data_Visualization.Overview_output import pie_chart_total_enrollees
 from Data_Visualization.Timelines_Analysis.Total_Male_vs_Female_Time import enrollment_trend_by_gender
 from Data_Visualization.Overview_heatmap import get_region_heatmap_figure
 from Data_Visualization.phmap import phmap
+from Data_Visualization.Timelines_Analysis.Total_Enrollees_Timeline import get_enrollment_trend_figure, get_latest_total_enrollees
+
 
 def register_callbacks(app):
     # 1. Render page content based on selected tab
@@ -193,3 +195,13 @@ def register_callbacks(app):
         time.sleep(0.3)
         df = pd.DataFrame(data or [])
         return pie_chart_total_enrollees(df)
+
+    @app.callback(
+        Output("total-enrollees-display", "children"),
+        Input("dataset-select", "value")
+    )
+    def update_total_enrollees(selected_file):
+        number = get_latest_total_enrollees(selected_file)
+        return f"{number:,}"
+
+
